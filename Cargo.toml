@@ -1,5 +1,5 @@
 [package]
-name = "nauty-bindgen"
+name = "nauty-Traces-sys"
 version = "0.1.0"
 authors = ["Andreas Maier <andreas.martin.maier@desy.de>"]
 edition = "2018"
