@@ -122,10 +122,14 @@ impl std::default::Default for TracesStats {
     }
 }
 
+/// Create an empty graph with `n` vertices.
+/// `m` should be set to `SETWORDSNEEDED(n)`.
 pub fn empty_graph(m: usize, n: usize) -> Vec<graph> {
     vec![0; m*n]
 }
 
+/// Create an uninitialised graph with `n` vertices.
+/// `m` should be set to `SETWORDSNEEDED(n)`.
 pub fn uninit_graph(m: usize, n: usize) -> Vec<graph> {
     Vec::with_capacity(m*n)
 }
@@ -172,6 +176,7 @@ impl std::default::Default for sparsegraph {
     }
 }
 
+/// Sparse graph with allocated memory
 #[derive(Debug, Default, Clone)]
 pub struct SparseGraph {
     pub v: Vec<size_t>,
@@ -180,6 +185,7 @@ pub struct SparseGraph {
 }
 
 impl SparseGraph {
+    /// Create a sparse graph with the given number of vertices and edges
     pub fn new(vertices: usize, edges: usize) -> Self {
         SparseGraph {
             v: vec![0; vertices],
