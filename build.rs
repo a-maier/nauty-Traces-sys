@@ -35,6 +35,7 @@ fn main() {
         .whitelist_function("freeschreier")
         .whitelist_function("addpermutation")
         .whitelist_var("dispatch_graph")
+        .whitelist_var("dispatch_sparse")
     // types are off for the following
         .whitelist_var("TRUE")
         .whitelist_var("FALSE")

@@ -66,6 +66,34 @@ impl std::default::Default for optionblk {
     }
 }
 
+impl optionblk {
+    pub fn default_sparse() -> Self {
+        optionblk{
+            getcanon: 0,
+            digraph: FALSE,
+            writeautoms: FALSE,
+            writemarkers: FALSE,
+            defaultptn: TRUE,
+            cartesian: FALSE,
+            linelength: CONSOLWIDTH,
+            outfile: std::ptr::null_mut(),
+            userrefproc: None,
+            userautomproc: None,
+            userlevelproc: None,
+            usernodeproc: None,
+            usercanonproc: None,
+            invarproc: None,
+            tc_level: 100,
+            mininvarlevel: 0,
+            maxinvarlevel: 1,
+            invararg: 0,
+            dispatch: unsafe {&mut dispatch_sparse},
+            schreier: FALSE,
+            extra_options: std::ptr::null_mut(),
+        }
+    }
+}
+
 impl std::default::Default for TracesOptions {
     fn default() -> Self {
         TracesOptions{
@@ -335,14 +363,13 @@ mod tests {
     }
 
     #[test]
-    #[ignore] // fails for unknown reason
     fn nautyex4() {
         let n_range = 1..20;
 
         use ::std::os::raw::c_int;
-        let mut options = optionblk::default();
+        let mut options = optionblk::default_sparse();
         let mut stats = statsblk::default();
-        options.writeautoms = TRUE;
+        // options.writeautoms = TRUE;
 
         for n in n_range {
             let m = SETWORDSNEEDED(n);
@@ -384,20 +411,21 @@ mod tests {
                 );
             }
 
-            print!("Automorphism group size = ");
-            unsafe {
-                writegroupsize(stdout, stats.grpsize1, stats.grpsize2);
+            println!("Automorphism group size = {}", stats.grpsize1);
+            if n < 3 {
+                assert_eq!(stats.grpsize1, n as f64)
+            } else {
+                assert_eq!(stats.grpsize1, 2.*n as f64)
             }
             println!();
         }
     }
 
     #[test]
-    #[ignore] // same problem as nautyex4
     fn nautyex5() {
         let n_range = (2..20).step_by(2);
 
-        let mut options = optionblk::default();
+        let mut options = optionblk::default_sparse();
         let mut stats = statsblk::default();
 
         let mut cg1 = sparsegraph::default();
@@ -492,8 +520,9 @@ mod tests {
             }
 
             /* Compare canonically labelled graphs */
-
-            if unsafe{ aresame_sg(&mut cg1,&mut cg2) } == TRUE {
+            let are_same = unsafe{ aresame_sg(&mut cg1,&mut cg2) } == TRUE;
+            assert!(are_same);
+            if are_same {
                 println!("Isomorphic");
                 if n <= 1000 {
                  /* Write the isomorphism.  For each i, vertex lab1[i]
