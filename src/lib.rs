@@ -11,6 +11,7 @@ pub const TRUE: boolean = bindings::TRUE as boolean;
 pub const CONSOLWIDTH: ::std::os::raw::c_int = bindings::CONSOLWIDTH as ::std::os::raw::c_int;
 
 // bindgen gets this wrong somehow? linker won't find it.
+#[allow(clippy::unreadable_literal)]
 #[allow(non_upper_case_globals)]
 pub const bit: [set; 64] = [
     0o1000000000000000000000,0o400000000000000000000,
