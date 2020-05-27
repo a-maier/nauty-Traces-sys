@@ -1,3 +1,4 @@
+#![doc(html_root_url = "https://docs.rs/nauty-Traces-sys/0.1.0")]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 mod bindings;
