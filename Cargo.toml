@@ -14,5 +14,4 @@ repository = "https://github.com/a-maier/nauty-Traces-sys"
 bindgen = "0.53"
 
 [dependencies]
-env_logger = "0.7"
 num-integer = "0.1"

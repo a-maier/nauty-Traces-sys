@@ -219,16 +219,10 @@ mod tests {
     use super::*;
     use ::std::os::raw::c_int;
 
-    fn log_init() {
-        let _ = env_logger::builder().is_test(true).try_init();
-    }
-
     // test nauty examples nautyex2.c to nautyex10.c
 
     #[test]
     fn nautyex2() {
-        log_init();
-
         let orders = [1., 2., 6., 8., 10., 12., 14., 16., 18., 20.];
 
         let mut options = optionblk::default();
@@ -277,8 +271,6 @@ mod tests {
 
     #[test]
     fn nautyex3() {
-        log_init();
-
         // nautyex3.c nauty example
 
         let mut options = optionblk::default();
@@ -345,8 +337,6 @@ mod tests {
     #[test]
     #[ignore] // fails for unknown reason
     fn nautyex4() {
-        log_init();
-
         let n_range = 1..20;
 
         use ::std::os::raw::c_int;
@@ -405,8 +395,6 @@ mod tests {
     #[test]
     #[ignore] // same problem as nautyex4
     fn nautyex5() {
-        log_init();
-
         let n_range = (2..20).step_by(2);
 
         let mut options = optionblk::default();
@@ -528,8 +516,6 @@ mod tests {
 
     #[test]
     fn nautyex6() {
-        log_init();
-
         let n_range = (2..20).step_by(2);
 
         let mut options = optionblk::default();
@@ -631,8 +617,6 @@ mod tests {
 
     #[test]
     fn nautyex7() {
-        log_init();
-
         let n_range = (2..20).step_by(2);
 
         let mut options = TracesOptions::default();
@@ -753,8 +737,6 @@ mod tests {
 
     #[test]
     fn nautyex8() {
-        log_init();
-
         let n_range = (2..20).step_by(2);
 
         // nautyex8.c nauty example
@@ -855,8 +837,6 @@ mod tests {
 
     #[test]
     fn nautyex9() {
-        log_init();
-
         let mut auto_group_size = std::collections::HashMap::new();
         for i in &[3,4,6,7,8,9,11,12,14,15,16,18,19] {
             auto_group_size.insert(*i, None);
@@ -977,8 +957,6 @@ mod tests {
 
     #[test]
     fn nautyex10() {
-        log_init();
-
         let n_range = (2..20).step_by(2);
 
         let mut options = TracesOptions::default();
