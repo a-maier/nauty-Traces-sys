@@ -22,9 +22,6 @@ nauty-Traces-sys = "0.1"
 
 * This crate was only tested against version 2.6 of nauty and Traces.
 
-* Currently, there are no passing tests for the `sparsenauty`
-  function. If possible, use `densenauty` or `Traces` instead.
-
 * Some C macros have no direct equivalent.
 
     - Instead of using `DYNALLSTAT` and `DYNALLOC` you can create
@@ -32,8 +29,9 @@ nauty-Traces-sys = "0.1"
 
     - Use the `empty_graph` function in place of `EMPTY_GRAPH`.
 
-    - `DEFAULT`-type macros have been replaced with implementations of
-      the rust `Default` trait.
+    - Most `DEFAULT`-type macros have been replaced with
+      implementations of the rust `Default` trait. For `sparsenauty`
+      default options use `optionsblk::default_sparse()`.
 
     - The `SparseGraph` struct helps with creating sparse graphs. A
       `&mut SparseGraph` can be converted to the `sparsegraph` use by
