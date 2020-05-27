@@ -3,6 +3,12 @@ name = "nauty-Traces-sys"
 version = "0.1.0"
 authors = ["Andreas Maier <andreas.martin.maier@desy.de>"]
 edition = "2018"
+description = "Low-level bindings for nauty and Traces"
+license = "Apache-2.0"
+readme = "Readme.md"
+keywords = ["graph-algorithms"]
+categories = ["external-ffi-bindings", "mathematics"]
+repository = "https://github.com/a-maier/nauty-Traces-sys"
 
 [build-dependencies]
 bindgen = "0.53"
