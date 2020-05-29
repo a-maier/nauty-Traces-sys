@@ -5,11 +5,18 @@ mod bindings;
 
 pub use bindings::*;
 use num_integer::Integer;
+use ::std::os::raw::c_int;
 
 // bindgen doesn't get the types right for the following constants
 pub const FALSE: boolean = bindings::FALSE as boolean;
 pub const TRUE: boolean = bindings::TRUE as boolean;
-pub const CONSOLWIDTH: ::std::os::raw::c_int = bindings::CONSOLWIDTH as ::std::os::raw::c_int;
+pub const CONSOLWIDTH: c_int = bindings::CONSOLWIDTH as c_int;
+
+pub const MTOOBIG: c_int = bindings::MTOOBIG as c_int;
+pub const NTOOBIG: c_int = bindings::NTOOBIG as c_int;
+pub const CANONGNIL: c_int = bindings::CANONGNIL as c_int;
+pub const NAUABORTED: c_int = bindings::NAUABORTED as c_int;
+pub const NAUKILLED: c_int = bindings::NAUKILLED as c_int;
 
 // bindgen gets this wrong somehow? linker won't find it.
 #[allow(clippy::unreadable_literal)]
@@ -209,8 +216,8 @@ impl std::default::Default for sparsegraph {
 #[derive(Debug, Default, Clone)]
 pub struct SparseGraph {
     pub v: Vec<size_t>,
-    pub d: Vec<::std::os::raw::c_int>,
-    pub e: Vec<::std::os::raw::c_int>,
+    pub d: Vec<c_int>,
+    pub e: Vec<c_int>,
 }
 
 impl SparseGraph {
@@ -227,7 +234,7 @@ impl SparseGraph {
 impl<'a> std::convert::From<&'a mut SparseGraph> for sparsegraph {
     fn from(g: &'a mut SparseGraph) -> Self {
         sparsegraph {
-            nv: g.v.len() as ::std::os::raw::c_int,
+            nv: g.v.len() as c_int,
             nde: g.e.len() as size_t,
             v: g.v.as_mut_ptr(),
             d: g.d.as_mut_ptr(),
