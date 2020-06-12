@@ -34,7 +34,7 @@ nauty-Traces-sys = "0.1"
       default options use `optionsblk::default_sparse()`.
 
     - The `SparseGraph` struct helps with creating sparse graphs. A
-      `&mut SparseGraph` can be converted to the `sparsegraph` use by
+      `&mut SparseGraph` can be converted to the `sparsegraph` used by
       nauty and Traces.
 
 # Examples
