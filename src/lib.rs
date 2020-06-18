@@ -195,6 +195,20 @@ pub fn SETBT(pos: usize) -> usize {
     pos & (WORDSIZE as usize - 1)
 }
 
+pub fn DYNFREE<T>(ptr: &mut *mut T, len: &mut size_t) {
+    unsafe {
+        libc::free(*ptr as *mut libc::c_void);
+    }
+    *ptr = std::ptr::null_mut();
+    *len = 0;
+ }
+
+pub fn SG_FREE(sg: &mut sparsegraph) {
+    DYNFREE(&mut sg.v, &mut sg.vlen);
+    DYNFREE(&mut sg.d, &mut sg.dlen);
+    DYNFREE(&mut sg.e, &mut sg.elen);
+}
+
 impl std::default::Default for sparsegraph {
     fn default() -> Self {
         sparsegraph{
