@@ -11,7 +11,7 @@ categories = ["external-ffi-bindings", "mathematics"]
 repository = "https://github.com/a-maier/nauty-Traces-sys"
 
 [build-dependencies]
-bindgen = "0.53"
+bindgen = "0.59"
 
 [dependencies]
 libc = "0.2"
