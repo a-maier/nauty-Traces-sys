@@ -67,10 +67,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 nauty_check(WORDSIZE as c_int, m as c_int, n as c_int, NAUTYVERSIONID as c_int);
             }
 
-            let mut lab = Vec::with_capacity(n);
-            let mut ptn = Vec::with_capacity(n);
-            // since we want to use this variable later on
-            // we use vec![0; n] instead of Vec::with_capacity(n)
+            let mut lab = vec![0; n];
+            let mut ptn = vec![0; n];
             let mut orbits = vec![0; n];
 
             let mut g = empty_graph(m, n);
@@ -103,7 +101,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             print!("order = ");
             io::stdout().flush().unwrap();
             unsafe {
-                writegroupsize(stderr,stats.grpsize1,stats.grpsize2);
+                writegroupsize(stderr, stats.grpsize1, stats.grpsize2);
             }
             println!();
         } else {

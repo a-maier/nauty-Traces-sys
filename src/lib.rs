@@ -286,9 +286,9 @@ mod tests {
                 nauty_check(WORDSIZE as c_int, m as c_int, n as c_int, NAUTYVERSIONID as c_int);
             }
 
-            let mut lab = Vec::with_capacity(n);
-            let mut ptn = Vec::with_capacity(n);
-            let mut orbits = Vec::with_capacity(n);
+            let mut lab = vec![0; n];
+            let mut ptn = vec![0; n];
+            let mut orbits = vec![0; n];
             let mut g = empty_graph(m, n);
             for v in 0..n {
                 ADDONEEDGE(&mut g, v, (v + 1) % n, m);
@@ -338,9 +338,9 @@ mod tests {
             }
 
             let mut g = empty_graph(n, m);
-            let mut lab = Vec::with_capacity(n);
-            let mut ptn = Vec::with_capacity(n);
-            let mut orbits = Vec::with_capacity(n);
+            let mut lab = vec![0; n];
+            let mut ptn = vec![0; n];
+            let mut orbits = vec![0; n];
 
             for v in 0..n {
                 ADDONEEDGE(&mut g, v, (v + 1) % n, m)
@@ -399,9 +399,9 @@ mod tests {
                 nauty_check(WORDSIZE as c_int, m as c_int, n as c_int, NAUTYVERSIONID as c_int);
             }
 
-            let mut lab = Vec::with_capacity(n);
-            let mut ptn = Vec::with_capacity(n);
-            let mut orbits = Vec::with_capacity(n);
+            let mut lab = vec![0; n];
+            let mut ptn = vec![0; n];
+            let mut orbits = vec![0; n];
 
             /* SG_ALLOC makes sure that the v,d,e fields of a sparse graph
             structure point to arrays that are large enough.  This only
@@ -462,8 +462,8 @@ mod tests {
             }
             let mut lab1 = vec![0; n];
             let mut lab2 = vec![0; n];
-            let mut ptn = Vec::with_capacity(n);
-            let mut orbits = Vec::with_capacity(n);
+            let mut ptn = vec![0; n];
+            let mut orbits = vec![0; n];
             let mut map = vec![0; n];
 
             /* Now make the first graph */
@@ -584,8 +584,8 @@ mod tests {
 
             let mut lab1 = vec![0; n];
             let mut lab2 = vec![0; n];
-            let mut ptn = Vec::with_capacity(n);
-            let mut orbits = Vec::with_capacity(n);
+            let mut ptn = vec![0; n];
+            let mut orbits = vec![0; n];
             let mut map = vec![0; n];
             let mut cg1 = empty_graph(n, m);
             let mut cg2 = empty_graph(n, m);
@@ -688,8 +688,8 @@ mod tests {
 
             let mut lab1 = vec![0; n];
             let mut lab2 = vec![0; n];
-            let mut ptn = Vec::with_capacity(n);
-            let mut orbits = Vec::with_capacity(n);
+            let mut ptn = vec![0; n];
+            let mut orbits = vec![0; n];
             let mut map = vec![0; n];
 
             /* Now make the first graph */
@@ -806,8 +806,8 @@ mod tests {
 
             let mut lab1 = vec![0; n];
             let mut lab2 = vec![0; n];
-            let mut ptn = Vec::with_capacity(n);
-            let mut orbits = Vec::with_capacity(n);
+            let mut ptn = vec![0; n];
+            let mut orbits = vec![0; n];
             let mut map = vec![0; n];
 
             /* Now make the first graph */
@@ -912,9 +912,9 @@ mod tests {
                 nauty_check(WORDSIZE as c_int, m as c_int, n as c_int, NAUTYVERSIONID as c_int);
             }
 
-            let mut lab = Vec::with_capacity(n);
-            let mut ptn = Vec::with_capacity(n);
-            let mut orbits = Vec::with_capacity(n);
+            let mut lab = vec![0; n];
+            let mut ptn = vec![0; n];
+            let mut orbits = vec![0; n];
             let mut p = vec![0; n];
             let mut issquare = vec![FALSE; n];
 
@@ -1024,8 +1024,8 @@ mod tests {
             }
             let mut lab1 = vec![0; n];
             let mut lab2 = vec![0; n];
-            let mut ptn = Vec::with_capacity(n);
-            let mut orbits = Vec::with_capacity(n);
+            let mut ptn = vec![0; n];
+            let mut orbits = vec![0; n];
             let mut map = vec![0; n];
 
             /* Now make the first graph */
