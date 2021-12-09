@@ -20,7 +20,8 @@ nauty-Traces-sys = "0.1"
 * Nauty and Traces are not included in the sources and have to be
   already installed on your system.
 
-* This crate was only tested against version 2.6 of nauty and Traces.
+* This crate was only tested against versions 2.6 and 2.7 of nauty and
+  Traces.
 
 * Some C macros have no direct equivalent.
 
