@@ -2,7 +2,7 @@
 name = "nauty-Traces-sys"
 version = "0.1.1"
 authors = ["Andreas Maier <andreas.martin.maier@desy.de>"]
-edition = "2018"
+edition = "2021"
 description = "Low-level bindings for nauty and Traces"
 license = "Apache-2.0"
 readme = "Readme.md"
