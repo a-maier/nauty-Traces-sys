@@ -34,6 +34,7 @@ fn main() {
         .whitelist_function("aresame_sg")
         .whitelist_function("freeschreier")
         .whitelist_function("addpermutation")
+        .whitelist_function("sortlists_sg")
         .whitelist_var("dispatch_graph")
         .whitelist_var("dispatch_sparse")
     // types are off for the following
