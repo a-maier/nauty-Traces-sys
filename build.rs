@@ -38,6 +38,7 @@ fn main() {
         .allowlist_function("aresame_sg")
         .allowlist_function("freeschreier")
         .allowlist_function("addpermutation")
+        .allowlist_function("sortlists_sg")
         .allowlist_var("dispatch_graph")
         .allowlist_var("dispatch_sparse")
     // types are off for the following
