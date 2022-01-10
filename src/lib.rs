@@ -1165,4 +1165,103 @@ mod tests {
         }
     }
 
+    // test a number of sparsegraph functions
+    #[test]
+    fn sg_fun() {
+
+        let n = 10;
+
+        let mut sg = SparseGraph::new(
+            n,   /* Number of vertices */
+            2*n  /* Number of directed edges */
+        );
+
+        for i in 0..n {
+            sg.v[i] = 2*i as size_t;
+            sg.d[i] = 2;
+            sg.e[2*i] = ((i+n-1) % n) as c_int;      /* edge i->i-1 */
+            sg.e[2*i+1] = ((i+n+1) % n) as c_int;    /* edge i->i+1 */
+        }
+
+        unsafe {
+            test_copy_sg(&mut (&mut sg).into())
+        }
+
+        let m = SETWORDSNEEDED(n);
+        let mut g = empty_graph(m, n);
+        for v in 0..n {
+            ADDONEEDGE(&mut g, v, (v + 1) % n, m)
+        }
+        unsafe {
+            test_nauty_to_sg(&mut g, &mut (&mut sg).into(), n, m)
+        }
+        unsafe {
+            test_sg_to_nauty(&mut (&mut sg).into(), &mut g, n)
+        }
+
+        test_sortlists_sg(&mut sg);
+
+        // TODO: test `put_sg`
+    }
+
+    unsafe fn test_copy_sg(sg: &mut sparsegraph) {
+        let sg_cp = copy_sg(
+            sg,
+            std::ptr::null_mut()
+        );
+        assert!(aresame_sg(sg, sg_cp) != 0);
+        SG_FREE(&mut *sg_cp);
+    }
+
+    unsafe fn test_nauty_to_sg(
+        g: &mut [graph],
+        sg: &mut sparsegraph,
+        n: usize,
+        m: usize
+    ) {
+        let sg_from_g = nauty_to_sg(
+            g.as_mut_ptr(),
+            std::ptr::null_mut(),
+            m as c_int,
+            n as c_int
+        );
+        assert!(aresame_sg(sg, sg_from_g) != 0);
+        SG_FREE(&mut *sg_from_g);
+    }
+
+    unsafe fn test_sg_to_nauty(
+        sg: &mut sparsegraph,
+        g: &mut [graph],
+        n: usize,
+    ) {
+        let mut m = 0;
+        let mut g_from_sg = sg_to_nauty(
+            sg,
+            std::ptr::null_mut(),
+            0,
+            &mut m
+        );
+        let g2 = std::slice::from_raw_parts(
+            g_from_sg as *const graph,
+            n * m as usize
+        );
+        assert_eq!(&*g, g2);
+        std::mem::drop(g2);
+        let mut dummy = 0;
+        DYNFREE(&mut g_from_sg, &mut dummy);
+    }
+
+    fn test_sortlists_sg(
+        sg: &mut SparseGraph
+    ) {
+        let orig_sg = sg.clone();
+
+        unsafe {
+            sortlists_sg(&mut sg.into())
+        }
+        assert_eq!(orig_sg.v, sg.v);
+        assert_eq!(orig_sg.d, sg.d);
+        assert!(orig_sg.e != sg.e);
+    }
+
 }
