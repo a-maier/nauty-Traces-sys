@@ -7,8 +7,7 @@ automorphisms.
 
 # Usage
 
-Add the following
-lines to your Cargo.toml:
+Add the following lines to your Cargo.toml:
 
 ```toml
 [dependencies]
@@ -37,6 +36,18 @@ nauty-Traces-sys = "0.1"
     - The `SparseGraph` struct helps with creating sparse graphs. A
       `&mut SparseGraph` can be converted to the `sparsegraph` used by
       nauty and Traces.
+
+* Sometimes you may want to free memory that was allocated internally
+  by nauty and Traces, for example by the `nauty_to_sg` function. This
+  can only be done safely if nauty and Traces are linked to the same
+  libc as this crate. If that is the case, you can enable bindings to
+  `DYNFREE` and `SG_FREE` by adding the following lines to your
+  Cargo.toml:
+
+  ```toml
+  [dependencies]
+  nauty-Traces-sys = { version = "0.1", features = ["libc"] }
+  ```
 
 # Examples
 
