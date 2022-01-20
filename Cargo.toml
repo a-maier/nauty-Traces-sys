@@ -14,5 +14,5 @@ repository = "https://github.com/a-maier/nauty-Traces-sys"
 bindgen = "0.59"
 
 [dependencies]
-libc = "0.2"
+libc = { version = "0.2", optional = true }
 num-integer = "0.1"

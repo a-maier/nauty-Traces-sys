@@ -195,6 +195,7 @@ pub fn SETBT(pos: usize) -> usize {
     pos & (WORDSIZE as usize - 1)
 }
 
+#[cfg(feature = "libc")]
 pub fn DYNFREE<T>(ptr: &mut *mut T, len: &mut size_t) {
     unsafe {
         libc::free(*ptr as *mut libc::c_void);
@@ -203,6 +204,7 @@ pub fn DYNFREE<T>(ptr: &mut *mut T, len: &mut size_t) {
     *len = 0;
  }
 
+#[cfg(feature = "libc")]
 pub fn SG_FREE(sg: &mut sparsegraph) {
     DYNFREE(&mut sg.v, &mut sg.vlen);
     DYNFREE(&mut sg.d, &mut sg.dlen);
@@ -1166,6 +1168,7 @@ mod tests {
     }
 
     // test a number of sparsegraph functions
+    #[cfg(feature = "libc")]
     #[test]
     fn sg_fun() {
 
@@ -1204,6 +1207,7 @@ mod tests {
         // TODO: test `put_sg`
     }
 
+    #[cfg(feature = "libc")]
     unsafe fn test_copy_sg(sg: &mut sparsegraph) {
         let sg_cp = copy_sg(
             sg,
@@ -1213,6 +1217,7 @@ mod tests {
         SG_FREE(&mut *sg_cp);
     }
 
+    #[cfg(feature = "libc")]
     unsafe fn test_nauty_to_sg(
         g: &mut [graph],
         sg: &mut sparsegraph,
@@ -1229,6 +1234,7 @@ mod tests {
         SG_FREE(&mut *sg_from_g);
     }
 
+    #[cfg(feature = "libc")]
     unsafe fn test_sg_to_nauty(
         sg: &mut sparsegraph,
         g: &mut [graph],
@@ -1251,6 +1257,7 @@ mod tests {
         DYNFREE(&mut g_from_sg, &mut dummy);
     }
 
+    #[cfg(feature = "libc")]
     fn test_sortlists_sg(
         sg: &mut SparseGraph
     ) {
