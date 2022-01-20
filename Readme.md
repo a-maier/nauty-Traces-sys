@@ -11,7 +11,7 @@ Add the following lines to your Cargo.toml:
 
 ```toml
 [dependencies]
-nauty-Traces-sys = "0.1"
+nauty-Traces-sys = "0.2"
 ```
 
 # Caveats
@@ -46,7 +46,7 @@ nauty-Traces-sys = "0.1"
 
   ```toml
   [dependencies]
-  nauty-Traces-sys = { version = "0.1", features = ["libc"] }
+  nauty-Traces-sys = { version = "0.2", features = ["libc"] }
   ```
 
 # Examples
