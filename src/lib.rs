@@ -121,6 +121,7 @@ impl std::default::Default for TracesOptions {
     }
 }
 
+#[allow(clippy::derivable_impls)]
 impl std::default::Default for statsblk {
     fn default() -> Self {
         statsblk{
@@ -141,6 +142,7 @@ impl std::default::Default for statsblk {
     }
 }
 
+#[allow(clippy::derivable_impls)]
 impl std::default::Default for TracesStats {
     fn default() -> Self {
         TracesStats{
