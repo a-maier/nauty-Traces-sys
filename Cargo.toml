@@ -12,7 +12,16 @@ repository = "https://github.com/a-maier/nauty-Traces-sys"
 
 [build-dependencies]
 bindgen = "0.59"
+cc = { version = "1.0.73", optional = true }
 
 [dependencies]
 libc = { version = "0.2", optional = true }
 num-integer = "0.1"
+
+[features]
+default = ["bundled", "tls"]
+bundled = ["cc"]
+tls = ["bundled"]
+native = ["bundled"]
+no_clz = ["bundled"]
+no_popcnt = ["bundled"]
