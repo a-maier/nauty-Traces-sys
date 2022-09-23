@@ -20,7 +20,7 @@ num-integer = "0.1"
 
 [features]
 default = ["bundled", "tls"]
-bundled = ["cc"]
+bundled = ["cc", "libc"]
 tls = ["bundled"]
 native = ["bundled"]
 no_clz = ["bundled"]
