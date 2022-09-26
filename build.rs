@@ -91,12 +91,23 @@ fn compile_nauty<K: AsRef<str>, V: AsRef<str>>(
     defines: &HashMap<K, Option<V>>
 ) {
     const NAUTY_DIR: &str = "nauty27r4";
-    const NAUTY_HEADERS: [&str; 5] = [
-        "nauty-h.in",
-        "schreier.h",
+    const NAUTY_HEADERS: [&str; 16] = [
+        "gtools.h",
+        "gutils.h",
         "naugroup.h",
+        "naugstrings.h",
+        "naurng.h",
         "nausparse.h",
+        "nautaux.h",
+        "nautinv.h",
+        "naututil.h",
+        "nautycliquer.h",
+        "nauty.h",
+        "planarity.h",
+        "rng.h",
+        "schreier.h",
         "traces.h",
+        "sorttemplates.c",
     ];
     const NAUTY_SRC_FILES: [&str; 15] = [
         "nauty.c",
