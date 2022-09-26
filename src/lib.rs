@@ -27,7 +27,7 @@ pub const bit: [set; set::BITS as usize] = {
     while num < arr.len() {
         let idx = arr.len() - num - 1;
         arr[idx] = val;
-        val = val << 1;
+        val <<= 1;
         num += 1;
     }
     arr

@@ -10,13 +10,12 @@ fn main() {
     #[cfg(feature = "bundled")]
     compile_nauty(&defines);
 
-    let wrapper;
-    if cfg!(feature = "bundled") {
+    let wrapper = if cfg!(feature = "bundled") {
         println!("cargo:rustc-link-lib=nauty_bundled");
-        wrapper = "wrapper-bundled.h";
+        "wrapper-bundled.h"
     } else {
         println!("cargo:rustc-link-lib=nauty");
-        wrapper = "wrapper.h";
+        "wrapper.h"
     };
     println!("cargo:rerun-if-changed={wrapper}");
 
