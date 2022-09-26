@@ -14,13 +14,15 @@ Add the following lines to your Cargo.toml:
 nauty-Traces-sys = "0.2"
 ```
 
+By default, you need a C compiler installed on your system. See the
+[Features section](#features) for alternatives.
+
 # Caveats
 
-* Nauty and Traces are not included in the sources and have to be
-  already installed on your system.
-
-* This crate was only tested against versions 2.6 and 2.7 of nauty and
-  Traces.
+* You can use either the version of nauty and Traces that is bundled
+  with this crate or a local installation. Both options have
+  advantages and disadvantages. See the [Features section](#features)
+  below.
 
 * Some C macros have no direct equivalent.
 
@@ -36,18 +38,6 @@ nauty-Traces-sys = "0.2"
     - The `SparseGraph` struct helps with creating sparse graphs. A
       `&mut SparseGraph` can be converted to the `sparsegraph` used by
       nauty and Traces.
-
-* Sometimes you may want to free memory that was allocated internally
-  by nauty and Traces, for example by the `nauty_to_sg` function. This
-  can only be done safely if nauty and Traces are linked to the same
-  libc as this crate. If that is the case, you can enable bindings to
-  `DYNFREE` and `SG_FREE` by adding the following lines to your
-  Cargo.toml:
-
-  ```toml
-  [dependencies]
-  nauty-Traces-sys = { version = "0.2", features = ["libc"] }
-  ```
 
 # Examples
 
@@ -123,3 +113,40 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 ```
+
+# Features
+
+See [The Cargo
+Book](https://doc.rust-lang.org/cargo/reference/features.html) for
+guidance on features.
+
+## Default features
+
+- `bundled`: Use the version of nauty and Traces that comes bundled
+  with this crate. This requires a C compiler on your system.
+
+  Deactivate this feature to use a custom installation. In that case,
+  you can only free memory allocated by nauty and Traces if this crate
+  is linked to the same libc. Use the `libc` feature to generate the
+  required bindings.
+
+- `tls`: Ensure thread-safety in the bundled library. Corresponds to
+  compiling nauty and Traces with `USE_TLS` defined.
+
+- `libc`: nauty and Traces sometimes allocate memory internally, for
+  example in the `nauty_to_sg` function. This feature enable bindings
+  to `DYNFREE` and `SG_FREE`, which are needed to deallocate this
+  memory again. Note that this can only be done safely if nauty and
+  Traces are linked to the same libc as this crate.
+
+## Non-default features
+
+Activating the following features may make the generated binaries
+faster but less portable.
+
+- `clz`: Allow using the `lzcnt` processor instruction, if available.
+
+- `popcnt`: Allow using the `popcnt` processor instruction, if available.
+
+- `native`: Allow processor instructions that are specific to the
+  current hardware. Implies `clz` and `popcnt`.
