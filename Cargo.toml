@@ -22,6 +22,7 @@ num-integer = "0.1"
 default = ["bundled", "tls"]
 bundled = ["cc", "libc"]
 tls = ["bundled"]
-native = ["bundled"]
-no_clz = ["bundled"]
-no_popcnt = ["bundled"]
+# TOOD: detect c compiler support
+clz = ["bundled"]
+popcnt = ["bundled"]
+native = ["bundled", "clz", "popcnt"]
