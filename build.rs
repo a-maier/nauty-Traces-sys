@@ -1,10 +1,14 @@
+use std::collections::HashMap;
 use std::env;
+use std::ffi::c_long;
+use std::fmt::{Display, Write};
 use std::path::PathBuf;
 
 fn main() {
+    let defines = get_nauty_defines();
 
     #[cfg(feature = "bundled")]
-    compile_nauty();
+    compile_nauty(&defines);
 
     let wrapper;
     if cfg!(feature = "bundled") {
@@ -17,6 +21,7 @@ fn main() {
     println!("cargo:rerun-if-changed={wrapper}");
 
     let bindings = bindgen::Builder::default()
+        .header_contents("nauty-flags.h", &c_defines(&defines))
         .header(wrapper)
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         .derive_eq(true)
@@ -82,7 +87,9 @@ fn main() {
 }
 
 #[cfg(feature = "bundled")]
-fn compile_nauty() {
+fn compile_nauty<K: AsRef<str>, V: AsRef<str>>(
+    defines: &HashMap<K, Option<V>>
+) {
     const NAUTY_DIR: &str = "nauty27r4";
     const NAUTY_HEADERS: [&str; 5] = [
         "nauty-h.in",
@@ -112,11 +119,62 @@ fn compile_nauty() {
     for file in NAUTY_HEADERS.iter().chain(NAUTY_SRC_FILES.iter()) {
         println!("cargo:rerun-if-changed=src/{NAUTY_DIR}/{file}");
     }
+
     let mut cc_cmd = cc::Build::new();
+    #[cfg(feature = "native")]
+    cc_cmd.flag_if_supported("-march=native");
+    #[cfg(feature = "popcnt")]
+    {
+        cc_cmd.flag_if_supported("-mpopcnt");
+    }
+    for (key, val) in defines.iter() {
+        cc_cmd.define(key.as_ref(), val.as_ref().map(|v| v.as_ref()));
+    }
+
     cc_cmd.warnings(false).files(
         NAUTY_SRC_FILES.iter().map(|f| PathBuf::from_iter(["src", NAUTY_DIR, f]))
     );
 
     cc_cmd.compile("nauty_bundled");
+}
 
+fn get_nauty_defines() -> HashMap<&'static str, Option<&'static str>> {
+    if !cfg!(feature = "bundled") {
+        return HashMap::new()
+    }
+    let mut defines = HashMap::new();
+
+    // see section 3 in nauty manual (nauty 2.7r4)
+    if c_long::BITS > 32 {
+        defines.insert("WORDSIZE", Some("64"));
+    }
+
+    #[cfg(feature = "tls")]
+    defines.insert("USE_TLS", None);
+
+    #[cfg(feature = "popcnt")]
+    if is_x86_feature_detected!("popcnt") {
+        defines.insert("HAVE_HWPOPCNT", None);
+    }
+
+    #[cfg(feature = "lcz")]
+    if is_x86_feature_detected!("lzcnt") {
+        defines.insert("HAVE_HWLZCNT", None);
+    }
+
+    defines
+}
+
+fn c_defines<K: Display, V: Display>(
+    defines: &HashMap<K, Option<V>>
+) -> String {
+    let mut define_str = String::new();
+    for (key, val) in defines.iter() {
+        if let Some(val) = val {
+            writeln!(&mut define_str, "#define {key} {val}").unwrap();
+        } else {
+            writeln!(&mut define_str, "#define {key}").unwrap();
+        }
+    }
+    define_str
 }
