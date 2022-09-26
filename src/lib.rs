@@ -3,9 +3,9 @@
 #![allow(non_snake_case)]
 mod bindings;
 
+use ::std::os::raw::c_int;
 pub use bindings::*;
 use num_integer::Integer;
-use ::std::os::raw::c_int;
 
 // bindgen doesn't get the types right for the following constants
 pub const FALSE: boolean = bindings::FALSE as boolean;
@@ -40,7 +40,7 @@ pub fn SETWORDSNEEDED(n: usize) -> usize {
 
 impl std::default::Default for optionblk {
     fn default() -> Self {
-        optionblk{
+        optionblk {
             getcanon: 0,
             digraph: FALSE,
             writeautoms: FALSE,
@@ -59,7 +59,7 @@ impl std::default::Default for optionblk {
             mininvarlevel: 0,
             maxinvarlevel: 1,
             invararg: 0,
-            dispatch: unsafe {&mut dispatch_graph},
+            dispatch: unsafe { &mut dispatch_graph },
             schreier: FALSE,
             extra_options: std::ptr::null_mut(),
         }
@@ -68,7 +68,7 @@ impl std::default::Default for optionblk {
 
 impl optionblk {
     pub fn default_sparse() -> Self {
-        optionblk{
+        optionblk {
             getcanon: 0,
             digraph: FALSE,
             writeautoms: FALSE,
@@ -87,7 +87,7 @@ impl optionblk {
             mininvarlevel: 0,
             maxinvarlevel: 1,
             invararg: 0,
-            dispatch: unsafe {&mut dispatch_sparse},
+            dispatch: unsafe { &mut dispatch_sparse },
             schreier: FALSE,
             extra_options: std::ptr::null_mut(),
         }
@@ -96,7 +96,7 @@ impl optionblk {
 
 impl std::default::Default for TracesOptions {
     fn default() -> Self {
-        TracesOptions{
+        TracesOptions {
             getcanon: FALSE,
             writeautoms: FALSE,
             cartesian: FALSE,
@@ -117,20 +117,20 @@ impl std::default::Default for TracesOptions {
 #[allow(clippy::derivable_impls)]
 impl std::default::Default for statsblk {
     fn default() -> Self {
-        statsblk{
-            canupdates:     Default::default(),
-            errstatus:      Default::default(),
-            grpsize1:       Default::default(),
-            grpsize2:       Default::default(),
-            invapplics:     Default::default(),
-            invarsuclevel:  Default::default(),
-            invsuccesses:   Default::default(),
-            maxlevel:       Default::default(),
-            numbadleaves:   Default::default(),
-            numgenerators:  Default::default(),
-            numnodes:       Default::default(),
-            numorbits:      Default::default(),
-            tctotal:        Default::default(),
+        statsblk {
+            canupdates: Default::default(),
+            errstatus: Default::default(),
+            grpsize1: Default::default(),
+            grpsize2: Default::default(),
+            invapplics: Default::default(),
+            invarsuclevel: Default::default(),
+            invsuccesses: Default::default(),
+            maxlevel: Default::default(),
+            numbadleaves: Default::default(),
+            numgenerators: Default::default(),
+            numnodes: Default::default(),
+            numorbits: Default::default(),
+            tctotal: Default::default(),
         }
     }
 }
@@ -138,17 +138,17 @@ impl std::default::Default for statsblk {
 #[allow(clippy::derivable_impls)]
 impl std::default::Default for TracesStats {
     fn default() -> Self {
-        TracesStats{
-            grpsize1:       Default::default(),
-            grpsize2:       Default::default(),
-            numgenerators:  Default::default(),
-            numorbits:      Default::default(),
-            treedepth:      Default::default(),
-            canupdates:     Default::default(),
-            errstatus:      Default::default(),
-            numnodes:       Default::default(),
-            interrupted:    Default::default(),
-            peaknodes:      Default::default(),
+        TracesStats {
+            grpsize1: Default::default(),
+            grpsize2: Default::default(),
+            numgenerators: Default::default(),
+            numorbits: Default::default(),
+            treedepth: Default::default(),
+            canupdates: Default::default(),
+            errstatus: Default::default(),
+            numnodes: Default::default(),
+            interrupted: Default::default(),
+            peaknodes: Default::default(),
         }
     }
 }
@@ -156,13 +156,13 @@ impl std::default::Default for TracesStats {
 /// Create an empty graph with `n` vertices.
 /// `m` should be set to `SETWORDSNEEDED(n)`.
 pub fn empty_graph(m: usize, n: usize) -> Vec<graph> {
-    vec![0; m*n]
+    vec![0; m * n]
 }
 
 /// Create an uninitialised graph with `n` vertices.
 /// `m` should be set to `SETWORDSNEEDED(n)`.
 pub fn uninit_graph(m: usize, n: usize) -> Vec<graph> {
-    Vec::with_capacity(m*n)
+    Vec::with_capacity(m * n)
 }
 
 pub fn ADDONEEDGE(g: &mut [graph], v: usize, w: usize, m: usize) {
@@ -197,7 +197,7 @@ pub fn DYNFREE<T>(ptr: &mut *mut T, len: &mut size_t) {
     }
     *ptr = std::ptr::null_mut();
     *len = 0;
- }
+}
 
 #[cfg(feature = "libc")]
 pub fn SG_FREE(sg: &mut sparsegraph) {
@@ -208,13 +208,13 @@ pub fn SG_FREE(sg: &mut sparsegraph) {
 
 impl std::default::Default for sparsegraph {
     fn default() -> Self {
-        sparsegraph{
-            nde:  Default::default(),
-            v:    std::ptr::null_mut(),
-            nv:   Default::default(),
-            d:    std::ptr::null_mut(),
-            e:    std::ptr::null_mut(),
-            w:    std::ptr::null_mut(),
+        sparsegraph {
+            nde: Default::default(),
+            v: std::ptr::null_mut(),
+            nv: Default::default(),
+            d: std::ptr::null_mut(),
+            e: std::ptr::null_mut(),
+            w: std::ptr::null_mut(),
             vlen: Default::default(),
             dlen: Default::default(),
             elen: Default::default(),
@@ -280,7 +280,12 @@ mod tests {
             let m = SETWORDSNEEDED(n);
 
             unsafe {
-                nauty_check(WORDSIZE as c_int, m as c_int, n as c_int, NAUTYVERSIONID as c_int);
+                nauty_check(
+                    WORDSIZE as c_int,
+                    m as c_int,
+                    n as c_int,
+                    NAUTYVERSIONID as c_int,
+                );
             }
 
             let mut lab = vec![0; n];
@@ -300,7 +305,7 @@ mod tests {
                     &mut stats,
                     m as c_int,
                     n as c_int,
-                    std::ptr::null_mut()
+                    std::ptr::null_mut(),
                 );
             }
             assert_eq!(stats.grpsize1, *order);
@@ -310,7 +315,7 @@ mod tests {
 
     extern "C" fn writeautom(p: *mut i32, n: i32) {
         for i in 0..n {
-            print!(" {:2}", unsafe{ *p.offset(i as isize) })
+            print!(" {:2}", unsafe { *p.offset(i as isize) })
         }
         println!()
     }
@@ -331,7 +336,12 @@ mod tests {
         for n in 1..20 {
             let m = SETWORDSNEEDED(n);
             unsafe {
-                nauty_check(WORDSIZE as c_int, m as c_int,n as c_int, NAUTYVERSIONID as c_int);
+                nauty_check(
+                    WORDSIZE as c_int,
+                    m as c_int,
+                    n as c_int,
+                    NAUTYVERSIONID as c_int,
+                );
             }
 
             let mut g = empty_graph(n, m);
@@ -355,7 +365,7 @@ mod tests {
                     &mut stats,
                     m as c_int,
                     n as c_int,
-                    std::ptr::null_mut()
+                    std::ptr::null_mut(),
                 );
 
                 /* Get a pointer to the structure in which the group information
@@ -393,7 +403,12 @@ mod tests {
             let m = SETWORDSNEEDED(n);
 
             unsafe {
-                nauty_check(WORDSIZE as c_int, m as c_int, n as c_int, NAUTYVERSIONID as c_int);
+                nauty_check(
+                    WORDSIZE as c_int,
+                    m as c_int,
+                    n as c_int,
+                    NAUTYVERSIONID as c_int,
+                );
             }
 
             let mut lab = vec![0; n];
@@ -405,15 +420,15 @@ mod tests {
             works if the structure has been initialised. */
 
             let mut sg = SparseGraph::new(
-                n,   /* Number of vertices */
-                2*n  /* Number of directed edges */
+                n,     /* Number of vertices */
+                2 * n, /* Number of directed edges */
             );
 
             for i in 0..n {
-                sg.v[i] = 2*i as size_t;
+                sg.v[i] = 2 * i as size_t;
                 sg.d[i] = 2;
-                sg.e[2*i] = ((i+n-1) % n) as c_int;      /* edge i->i-1 */
-                sg.e[2*i+1] = ((i+n+1) % n) as c_int;    /* edge i->i+1 */
+                sg.e[2 * i] = ((i + n - 1) % n) as c_int; /* edge i->i-1 */
+                sg.e[2 * i + 1] = ((i + n + 1) % n) as c_int; /* edge i->i+1 */
             }
 
             println!("Generators for Aut(C[{}]):", n);
@@ -433,7 +448,7 @@ mod tests {
             if n < 3 {
                 assert_eq!(stats.grpsize1, n as f64)
             } else {
-                assert_eq!(stats.grpsize1, 2.*n as f64)
+                assert_eq!(stats.grpsize1, 2. * n as f64)
             }
             println!();
         }
@@ -455,7 +470,12 @@ mod tests {
         for n in n_range {
             let m = SETWORDSNEEDED(n);
             unsafe {
-                nauty_check(WORDSIZE as c_int, m  as c_int, n  as c_int, NAUTYVERSIONID  as c_int);
+                nauty_check(
+                    WORDSIZE as c_int,
+                    m as c_int,
+                    n as c_int,
+                    NAUTYVERSIONID as c_int,
+                );
             }
             let mut lab1 = vec![0; n];
             let mut lab2 = vec![0; n];
@@ -466,37 +486,39 @@ mod tests {
             /* Now make the first graph */
 
             let mut sg1 = SparseGraph::new(
-                n, /* Number of vertices */
-                3*n /* Number of directed edges */
+                n,     /* Number of vertices */
+                3 * n, /* Number of directed edges */
             );
 
             for i in 0..n {
-                sg1.v[i] = (3*i) as size_t;     /* Position of vertex i in v array */
-                sg1.d[i] = 3;                /* Degree of vertex i */
+                sg1.v[i] = (3 * i) as size_t; /* Position of vertex i in v array */
+                sg1.d[i] = 3; /* Degree of vertex i */
             }
 
             for i in (0..n).step_by(2) {
-                sg1.e[sg1.v[i] as usize] = (i+1) as c_int;
-                sg1.e[sg1.v[i+1] as usize] = i as c_int;
+                sg1.e[sg1.v[i] as usize] = (i + 1) as c_int;
+                sg1.e[sg1.v[i + 1] as usize] = i as c_int;
             }
 
-            for i in 0..n-2 {  /* Clockwise edges */
-                sg1.e[(sg1.v[i]+1) as usize] = (i+2) as c_int;
+            for i in 0..n - 2 {
+                /* Clockwise edges */
+                sg1.e[(sg1.v[i] + 1) as usize] = (i + 2) as c_int;
             }
-            sg1.e[(sg1.v[n-2]+1) as usize] = 1;
-            sg1.e[(sg1.v[n-1]+1) as usize] = 0;
+            sg1.e[(sg1.v[n - 2] + 1) as usize] = 1;
+            sg1.e[(sg1.v[n - 1] + 1) as usize] = 0;
 
-            for i in 2..n  { /* Anticlockwise edges */
-                sg1.e[(sg1.v[i]+2) as usize] = (i-2) as c_int;
+            for i in 2..n {
+                /* Anticlockwise edges */
+                sg1.e[(sg1.v[i] + 2) as usize] = (i - 2) as c_int;
             }
-            sg1.e[(sg1.v[1]+2) as usize] = (n-2) as c_int;
-            sg1.e[(sg1.v[0]+2) as usize] = (n-1) as c_int;
+            sg1.e[(sg1.v[1] + 2) as usize] = (n - 2) as c_int;
+            sg1.e[(sg1.v[0] + 2) as usize] = (n - 1) as c_int;
 
             /* Now make the second graph */
 
             let mut sg2 = SparseGraph::new(
-                n,            /* Number of vertices */
-                3*n,          /* Number of directed edges */
+                n,     /* Number of vertices */
+                3 * n, /* Number of directed edges */
             );
 
             // // this is redundant already in nautyex5.c
@@ -506,11 +528,11 @@ mod tests {
             // }
 
             for i in 0..n {
-                sg2.v[i] = (3*i) as size_t;
+                sg2.v[i] = (3 * i) as size_t;
                 sg2.d[i] = 3;
-                sg2.e[sg2.v[i] as usize] = ((i+1) % n) as c_int;      /* Clockwise */
-                sg2.e[(sg2.v[i]+1) as usize] = ((i+n-1) % n) as c_int;  /* Anti-clockwise */
-                sg2.e[(sg2.v[i]+2) as usize] = ((i+n/2) % n) as c_int;  /* Diagonals */
+                sg2.e[sg2.v[i] as usize] = ((i + 1) % n) as c_int; /* Clockwise */
+                sg2.e[(sg2.v[i] + 1) as usize] = ((i + n - 1) % n) as c_int; /* Anti-clockwise */
+                sg2.e[(sg2.v[i] + 2) as usize] = ((i + n / 2) % n) as c_int; /* Diagonals */
             }
 
             /* Label sg1, result in cg1 and labelling in lab1; similarly sg2.
@@ -538,12 +560,12 @@ mod tests {
             }
 
             /* Compare canonically labelled graphs */
-            let are_same = unsafe{ aresame_sg(&mut cg1,&mut cg2) } == TRUE;
+            let are_same = unsafe { aresame_sg(&mut cg1, &mut cg2) } == TRUE;
             assert!(are_same);
             if are_same {
                 println!("Isomorphic");
                 if n <= 1000 {
-                 /* Write the isomorphism.  For each i, vertex lab1[i]
+                    /* Write the isomorphism.  For each i, vertex lab1[i]
                     of sg1 maps onto vertex lab2[i] of sg2.  We compute
                     the map in order of labelling because it looks better. */
 
@@ -573,10 +595,14 @@ mod tests {
         options.getcanon = TRUE;
 
         for n in n_range {
-
             let m = SETWORDSNEEDED(n);
             unsafe {
-                nauty_check(WORDSIZE as c_int, m as c_int, n as c_int, NAUTYVERSIONID as c_int);
+                nauty_check(
+                    WORDSIZE as c_int,
+                    m as c_int,
+                    n as c_int,
+                    NAUTYVERSIONID as c_int,
+                );
             }
 
             let mut lab1 = vec![0; n];
@@ -591,24 +617,24 @@ mod tests {
             /* ADDEDGE() is defined above */
             let mut g1 = empty_graph(m, n);
 
-            for i in 0..n-2 {
-                ADDONEEDGE(&mut g1, i, i+2, m)
+            for i in 0..n - 2 {
+                ADDONEEDGE(&mut g1, i, i + 2, m)
             }
-            ADDONEEDGE(&mut g1, n-2, 1, m);
-            ADDONEEDGE(&mut g1, n-1, 0, m);
+            ADDONEEDGE(&mut g1, n - 2, 1, m);
+            ADDONEEDGE(&mut g1, n - 1, 0, m);
             for i in (0..n).step_by(2) {
-                ADDONEEDGE(&mut g1,i,i+1,m)
+                ADDONEEDGE(&mut g1, i, i + 1, m)
             }
 
             /* Now make the second graph */
 
             let mut g2 = empty_graph(m, n);
-            for i in 0..n-1 {
-                ADDONEEDGE(&mut g2,i,i+1,m)
+            for i in 0..n - 1 {
+                ADDONEEDGE(&mut g2, i, i + 1, m)
             }
-            ADDONEEDGE(&mut g2,n-1,0,m);
-            for i in 0..n/2 {
-                ADDONEEDGE(&mut g2,i,i+n/2,m);
+            ADDONEEDGE(&mut g2, n - 1, 0, m);
+            for i in 0..n / 2 {
+                ADDONEEDGE(&mut g2, i, i + n / 2, m);
             }
 
             /* Label g1, result in cg1 and labelling in lab1; similarly g2.
@@ -654,7 +680,7 @@ mod tests {
                         map[lab1[i] as usize] = lab2[i];
                     }
                     for i in 0..n {
-                        print!(" {}-{}",i,map[i]);
+                        print!(" {}-{}", i, map[i]);
                     }
                     println!()
                 }
@@ -680,7 +706,12 @@ mod tests {
         for n in n_range {
             let m = SETWORDSNEEDED(n);
             unsafe {
-                nauty_check(WORDSIZE as c_int, m as c_int, n as c_int, NAUTYVERSIONID as c_int);
+                nauty_check(
+                    WORDSIZE as c_int,
+                    m as c_int,
+                    n as c_int,
+                    NAUTYVERSIONID as c_int,
+                );
             }
 
             let mut lab1 = vec![0; n];
@@ -692,46 +723,49 @@ mod tests {
             /* Now make the first graph */
             let mut sg1 = SparseGraph::new(
                 n,     /* Number of vertices */
-                3*n    /* Number of directed edges */
+                3 * n, /* Number of directed edges */
             );
 
             for i in 0..n {
-                sg1.v[i] = (3*i) as size_t;  /* Position of vertex i in v array */
-                sg1.d[i] = 3;                /* Degree of vertex i */
+                sg1.v[i] = (3 * i) as size_t; /* Position of vertex i in v array */
+                sg1.d[i] = 3; /* Degree of vertex i */
             }
 
-            for i in (0..n).step_by(2) { /* Spokes */
-                sg1.e[sg1.v[i] as usize] = (i+1) as c_int;
-                sg1.e[sg1.v[i+1] as usize] = i as c_int;
+            for i in (0..n).step_by(2) {
+                /* Spokes */
+                sg1.e[sg1.v[i] as usize] = (i + 1) as c_int;
+                sg1.e[sg1.v[i + 1] as usize] = i as c_int;
             }
 
-            for i in 0..n-2 {  /* Clockwise edges */
-                sg1.e[(sg1.v[i]+1) as usize] = (i+2) as c_int;
+            for i in 0..n - 2 {
+                /* Clockwise edges */
+                sg1.e[(sg1.v[i] + 1) as usize] = (i + 2) as c_int;
             }
-            sg1.e[(sg1.v[n-2]+1) as usize] = 1;
-            sg1.e[(sg1.v[n-1]+1) as usize] = 0;
+            sg1.e[(sg1.v[n - 2] + 1) as usize] = 1;
+            sg1.e[(sg1.v[n - 1] + 1) as usize] = 0;
 
-            for i in 2..n {  /* Anticlockwise edges */
-                sg1.e[(sg1.v[i]+2) as usize] = (i-2) as c_int;
+            for i in 2..n {
+                /* Anticlockwise edges */
+                sg1.e[(sg1.v[i] + 2) as usize] = (i - 2) as c_int;
             }
-            sg1.e[(sg1.v[1]+2) as usize] = (n-2) as c_int;
-            sg1.e[(sg1.v[0]+2) as usize] = (n-1) as c_int;
+            sg1.e[(sg1.v[1] + 2) as usize] = (n - 2) as c_int;
+            sg1.e[(sg1.v[0] + 2) as usize] = (n - 1) as c_int;
 
             /* Now make the second graph */
             let mut sg2 = SparseGraph::new(
                 n,     /* Number of vertices */
-                3*n    /* Number of directed edges */
+                3 * n, /* Number of directed edges */
             );
 
             for i in 0..n {
-                sg2.v[i] = (3*i) as size_t;
+                sg2.v[i] = (3 * i) as size_t;
                 sg2.d[i] = 3;
-                sg2.e[(sg2.v[i]) as usize] = ((i+1) % n) as c_int;      /* Clockwise */
-                sg2.e[(sg2.v[i]+1) as usize] = ((i+n-1) % n) as c_int;  /* Anti-clockwise */
-                sg2.e[(sg2.v[i]+2) as usize] = ((i+n/2) % n) as c_int;  /* Diagonals */
+                sg2.e[(sg2.v[i]) as usize] = ((i + 1) % n) as c_int; /* Clockwise */
+                sg2.e[(sg2.v[i] + 1) as usize] = ((i + n - 1) % n) as c_int; /* Anti-clockwise */
+                sg2.e[(sg2.v[i] + 2) as usize] = ((i + n / 2) % n) as c_int; /* Diagonals */
             }
 
-         /* Label sg1, result in cg1 and labelling in lab1; similarly sg2.
+            /* Label sg1, result in cg1 and labelling in lab1; similarly sg2.
             It is not necessary to pre-allocate space in cg1 and cg2, but
             they have to be initialised as we did above.  */
 
@@ -743,7 +777,7 @@ mod tests {
                     orbits.as_mut_ptr(),
                     &mut options,
                     &mut stats,
-                    &mut cg1
+                    &mut cg1,
                 );
                 Traces(
                     &mut (&mut sg2).into(),
@@ -752,18 +786,17 @@ mod tests {
                     orbits.as_mut_ptr(),
                     &mut options,
                     &mut stats,
-                    &mut cg2
+                    &mut cg2,
                 );
             }
 
-
             /* Compare canonically labelled graphs */
-            let are_same = unsafe{ aresame_sg(&mut cg1, &mut cg2) } == TRUE;
+            let are_same = unsafe { aresame_sg(&mut cg1, &mut cg2) } == TRUE;
             assert!(are_same);
             if are_same {
                 println!("Isomorphic.");
                 if n <= 1000 {
-                 /* Write the isomorphism.  For each i, vertex lab1[i]
+                    /* Write the isomorphism.  For each i, vertex lab1[i]
                     of sg1 maps onto vertex lab2[i] of sg2.  We compute
                     the map in order of labelling because it looks better. */
 
@@ -771,12 +804,11 @@ mod tests {
                         map[lab1[i] as usize] = lab2[i]
                     }
                     for i in 0..n {
-                        print!(" {}-{}",i,map[i]);
+                        print!(" {}-{}", i, map[i]);
                     }
                     println!();
                 }
-            }
-            else {
+            } else {
                 println!("Not isomorphic.");
             }
         }
@@ -794,11 +826,15 @@ mod tests {
         options.getcanon = TRUE;
 
         for n in n_range {
-
             let m = SETWORDSNEEDED(n);
 
             unsafe {
-                nauty_check(WORDSIZE as c_int, m as c_int, n as c_int, NAUTYVERSIONID as c_int);
+                nauty_check(
+                    WORDSIZE as c_int,
+                    m as c_int,
+                    n as c_int,
+                    NAUTYVERSIONID as c_int,
+                );
             }
 
             let mut lab1 = vec![0; n];
@@ -811,11 +847,13 @@ mod tests {
 
             let mut g1 = empty_graph(m, n);
 
-            for i in (0..n).step_by(2) { /* Spokes */
+            for i in (0..n).step_by(2) {
+                /* Spokes */
                 ADDONEEDGE(&mut g1, i, i + 1, m);
             }
 
-            for i in 0..n-2 { /* Cycle */
+            for i in 0..n - 2 {
+                /* Cycle */
                 ADDONEEDGE(&mut g1, i, i + 2, m);
             }
             ADDONEEDGE(&mut g1, 1, n - 2, m);
@@ -826,7 +864,7 @@ mod tests {
             let mut g2 = empty_graph(m, n);
 
             for i in 0..n {
-                ADDONEEDGE(&mut g2, i, (i + 1) % n, m);     /* Rim */
+                ADDONEEDGE(&mut g2, i, (i + 1) % n, m); /* Rim */
                 ADDONEEDGE(&mut g2, i, (i + n / 2) % n, m); /* Diagonals */
             }
 
@@ -879,13 +917,12 @@ mod tests {
                 println!("Not isomorphic.")
             }
         }
-
     }
 
     #[test]
     fn nautyex9() {
         let mut auto_group_size = std::collections::HashMap::new();
-        for i in &[3,4,6,7,8,9,11,12,14,15,16,18,19] {
+        for i in &[3, 4, 6, 7, 8, 9, 11, 12, 14, 15, 16, 18, 19] {
             auto_group_size.insert(*i, None);
         }
         auto_group_size.insert(5, Some(10.));
@@ -906,7 +943,12 @@ mod tests {
         for n in n_range {
             let m = SETWORDSNEEDED(n);
             unsafe {
-                nauty_check(WORDSIZE as c_int, m as c_int, n as c_int, NAUTYVERSIONID as c_int);
+                nauty_check(
+                    WORDSIZE as c_int,
+                    m as c_int,
+                    n as c_int,
+                    NAUTYVERSIONID as c_int,
+                );
             }
 
             let mut lab = vec![0; n];
@@ -922,7 +964,7 @@ mod tests {
             /* Find the squares and the degree */
 
             for i in 0..n {
-                issquare[(i*i) % n] = TRUE;
+                issquare[(i * i) % n] = TRUE;
             }
             if issquare.last() != Some(&TRUE) {
                 assert_eq!(auto_group_size[&n], None);
@@ -932,18 +974,20 @@ mod tests {
 
             let mut deg = 0;
             for i in 1..n {
-                if issquare[i] == TRUE { deg += 1 }
+                if issquare[i] == TRUE {
+                    deg += 1
+                }
             }
 
             /* Now make the graph */
             let mut sg = SparseGraph::new(
-                n,     /* Number of vertices */
-                n*deg    /* Number of directed edges */
+                n,       /* Number of vertices */
+                n * deg, /* Number of directed edges */
             );
 
             for i in 0..n {
-                sg.v[i] = (i*deg) as size_t;  /* Position of vertex i in v array */
-                sg.d[i] = deg as c_int;      /* Degree of vertex i */
+                sg.v[i] = (i * deg) as size_t; /* Position of vertex i in v array */
+                sg.d[i] = deg as c_int; /* Degree of vertex i */
             }
 
             for i in 0..n {
@@ -959,24 +1003,30 @@ mod tests {
             /* Add known automorphisms */
 
             /* We wouldn't need freeschreier() if we were only
-               processing one graph, but it doesn't hurt.  This
-               is how to properly dispose of previous generators. */
+            processing one graph, but it doesn't hurt.  This
+            is how to properly dispose of previous generators. */
 
-            unsafe{ freeschreier(std::ptr::null_mut(), &mut gens); }
+            unsafe {
+                freeschreier(std::ptr::null_mut(), &mut gens);
+            }
 
             /* Cyclic rotation */
             for i in 0..n {
                 p[i] = ((i + 1) % n) as c_int;
             }
-            unsafe{ addpermutation(&mut gens, p.as_mut_ptr(), n as c_int); }
+            unsafe {
+                addpermutation(&mut gens, p.as_mut_ptr(), n as c_int);
+            }
 
             /* Reflection about 0 */
             for i in 0..n {
                 p[i] = ((n - i) % n) as c_int;
             }
-            unsafe{ addpermutation(&mut gens, p.as_mut_ptr(), n as c_int); }
+            unsafe {
+                addpermutation(&mut gens, p.as_mut_ptr(), n as c_int);
+            }
 
-             /* Call Traces */
+            /* Call Traces */
             unsafe {
                 Traces(
                     &mut (&mut sg).into(),
@@ -1013,11 +1063,15 @@ mod tests {
         let mut cg1 = sparsegraph::default();
         let mut cg2 = sparsegraph::default();
 
-
         for n in n_range {
             let m = SETWORDSNEEDED(n);
             unsafe {
-                nauty_check(WORDSIZE as c_int, m  as c_int, n  as c_int, NAUTYVERSIONID  as c_int);
+                nauty_check(
+                    WORDSIZE as c_int,
+                    m as c_int,
+                    n as c_int,
+                    NAUTYVERSIONID as c_int,
+                );
             }
             let mut lab1 = vec![0; n];
             let mut lab2 = vec![0; n];
@@ -1028,45 +1082,47 @@ mod tests {
             /* Now make the first graph */
 
             let mut sg1 = SparseGraph::new(
-                n, /* Number of vertices */
-                3*n /* Number of directed edges */
+                n,     /* Number of vertices */
+                3 * n, /* Number of directed edges */
             );
 
             for i in 0..n {
-                sg1.v[i] = (3*i) as size_t;     /* Position of vertex i in v array */
-                sg1.d[i] = 3;                /* Degree of vertex i */
+                sg1.v[i] = (3 * i) as size_t; /* Position of vertex i in v array */
+                sg1.d[i] = 3; /* Degree of vertex i */
             }
 
             for i in (0..n).step_by(2) {
-                sg1.e[sg1.v[i] as usize] = (i+1) as c_int;
-                sg1.e[sg1.v[i+1] as usize] = i as c_int;
+                sg1.e[sg1.v[i] as usize] = (i + 1) as c_int;
+                sg1.e[sg1.v[i + 1] as usize] = i as c_int;
             }
 
-            for i in 0..n-2 {  /* Clockwise edges */
-                sg1.e[(sg1.v[i]+1) as usize] = (i+2) as c_int;
+            for i in 0..n - 2 {
+                /* Clockwise edges */
+                sg1.e[(sg1.v[i] + 1) as usize] = (i + 2) as c_int;
             }
-            sg1.e[(sg1.v[n-2]+1) as usize] = 1;
-            sg1.e[(sg1.v[n-1]+1) as usize] = 0;
+            sg1.e[(sg1.v[n - 2] + 1) as usize] = 1;
+            sg1.e[(sg1.v[n - 1] + 1) as usize] = 0;
 
-            for i in 2..n  { /* Anticlockwise edges */
-                sg1.e[(sg1.v[i]+2) as usize] = (i-2) as c_int;
+            for i in 2..n {
+                /* Anticlockwise edges */
+                sg1.e[(sg1.v[i] + 2) as usize] = (i - 2) as c_int;
             }
-            sg1.e[(sg1.v[1]+2) as usize] = (n-2) as c_int;
-            sg1.e[(sg1.v[0]+2) as usize] = (n-1) as c_int;
+            sg1.e[(sg1.v[1] + 2) as usize] = (n - 2) as c_int;
+            sg1.e[(sg1.v[0] + 2) as usize] = (n - 1) as c_int;
 
             /* Now make the second graph */
 
             let mut sg2 = SparseGraph::new(
-                n,            /* Number of vertices */
-                3*n,          /* Number of directed edges */
+                n,     /* Number of vertices */
+                3 * n, /* Number of directed edges */
             );
 
             for i in 0..n {
-                sg2.v[i] = (3*i) as size_t;
+                sg2.v[i] = (3 * i) as size_t;
                 sg2.d[i] = 3;
-                sg2.e[sg2.v[i] as usize] = ((i+1) % n) as c_int;      /* Clockwise */
-                sg2.e[(sg2.v[i]+1) as usize] = ((i+n-1) % n) as c_int;  /* Anti-clockwise */
-                sg2.e[(sg2.v[i]+2) as usize] = ((i+n/2) % n) as c_int;  /* Diagonals */
+                sg2.e[sg2.v[i] as usize] = ((i + 1) % n) as c_int; /* Clockwise */
+                sg2.e[(sg2.v[i] + 1) as usize] = ((i + n - 1) % n) as c_int; /* Anti-clockwise */
+                sg2.e[(sg2.v[i] + 2) as usize] = ((i + n / 2) % n) as c_int; /* Diagonals */
             }
 
             /* Now we make the canonically labelled graphs by a two-step
@@ -1106,7 +1162,7 @@ mod tests {
                     orbits.as_mut_ptr(),
                     &mut options,
                     &mut stats,
-                    &mut cg1
+                    &mut cg1,
                 );
                 freeschreier(std::ptr::null_mut(), &mut generators);
             }
@@ -1132,19 +1188,18 @@ mod tests {
                     orbits.as_mut_ptr(),
                     &mut options,
                     &mut stats,
-                    &mut cg2
+                    &mut cg2,
                 );
                 freeschreier(std::ptr::null_mut(), &mut generators);
             }
 
-
             /* Compare canonically labelled graphs */
-            let are_same = unsafe{ aresame_sg(&mut cg1,&mut cg2) } == TRUE;
+            let are_same = unsafe { aresame_sg(&mut cg1, &mut cg2) } == TRUE;
             assert!(are_same);
             if are_same {
                 println!("Isomorphic");
                 if n <= 1000 {
-                 /* Write the isomorphism.  For each i, vertex lab1[i]
+                    /* Write the isomorphism.  For each i, vertex lab1[i]
                     of sg1 maps onto vertex lab2[i] of sg2.  We compute
                     the map in order of labelling because it looks better. */
 
@@ -1166,36 +1221,29 @@ mod tests {
     #[cfg(feature = "libc")]
     #[test]
     fn sg_fun() {
-
         let n = 10;
 
         let mut sg = SparseGraph::new(
-            n,   /* Number of vertices */
-            2*n  /* Number of directed edges */
+            n,     /* Number of vertices */
+            2 * n, /* Number of directed edges */
         );
 
         for i in 0..n {
-            sg.v[i] = 2*i as size_t;
+            sg.v[i] = 2 * i as size_t;
             sg.d[i] = 2;
-            sg.e[2*i] = ((i+n-1) % n) as c_int;      /* edge i->i-1 */
-            sg.e[2*i+1] = ((i+n+1) % n) as c_int;    /* edge i->i+1 */
+            sg.e[2 * i] = ((i + n - 1) % n) as c_int; /* edge i->i-1 */
+            sg.e[2 * i + 1] = ((i + n + 1) % n) as c_int; /* edge i->i+1 */
         }
 
-        unsafe {
-            test_copy_sg(&mut (&mut sg).into())
-        }
+        unsafe { test_copy_sg(&mut (&mut sg).into()) }
 
         let m = SETWORDSNEEDED(n);
         let mut g = empty_graph(m, n);
         for v in 0..n {
             ADDONEEDGE(&mut g, v, (v + 1) % n, m)
         }
-        unsafe {
-            test_nauty_to_sg(&mut g, &mut (&mut sg).into(), n, m)
-        }
-        unsafe {
-            test_sg_to_nauty(&mut (&mut sg).into(), &mut g, n)
-        }
+        unsafe { test_nauty_to_sg(&mut g, &mut (&mut sg).into(), n, m) }
+        unsafe { test_sg_to_nauty(&mut (&mut sg).into(), &mut g, n) }
 
         test_sortlists_sg(&mut sg);
 
@@ -1204,10 +1252,7 @@ mod tests {
 
     #[cfg(feature = "libc")]
     unsafe fn test_copy_sg(sg: &mut sparsegraph) {
-        let sg_cp = copy_sg(
-            sg,
-            std::ptr::null_mut()
-        );
+        let sg_cp = copy_sg(sg, std::ptr::null_mut());
         assert!(aresame_sg(sg, sg_cp) != 0);
         SG_FREE(&mut *sg_cp);
     }
@@ -1217,13 +1262,13 @@ mod tests {
         g: &mut [graph],
         sg: &mut sparsegraph,
         n: usize,
-        m: usize
+        m: usize,
     ) {
         let sg_from_g = nauty_to_sg(
             g.as_mut_ptr(),
             std::ptr::null_mut(),
             m as c_int,
-            n as c_int
+            n as c_int,
         );
         assert!(aresame_sg(sg, sg_from_g) != 0);
         SG_FREE(&mut *sg_from_g);
@@ -1236,15 +1281,10 @@ mod tests {
         n: usize,
     ) {
         let mut m = 0;
-        let mut g_from_sg = sg_to_nauty(
-            sg,
-            std::ptr::null_mut(),
-            0,
-            &mut m
-        );
+        let mut g_from_sg = sg_to_nauty(sg, std::ptr::null_mut(), 0, &mut m);
         let g2 = std::slice::from_raw_parts(
             g_from_sg as *const graph,
-            n * m as usize
+            n * m as usize,
         );
         assert_eq!(&*g, g2);
         std::mem::drop(g2);
@@ -1253,17 +1293,12 @@ mod tests {
     }
 
     #[cfg(feature = "libc")]
-    fn test_sortlists_sg(
-        sg: &mut SparseGraph
-    ) {
+    fn test_sortlists_sg(sg: &mut SparseGraph) {
         let orig_sg = sg.clone();
 
-        unsafe {
-            sortlists_sg(&mut sg.into())
-        }
+        unsafe { sortlists_sg(&mut sg.into()) }
         assert_eq!(orig_sg.v, sg.v);
         assert_eq!(orig_sg.d, sg.d);
         assert!(orig_sg.e != sg.e);
     }
-
 }

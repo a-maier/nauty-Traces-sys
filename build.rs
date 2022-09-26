@@ -60,7 +60,7 @@ fn main() {
         .allowlist_function("addpermutation")
         .allowlist_var("dispatch_graph")
         .allowlist_var("dispatch_sparse")
-    // types are off for the following
+        // types are off for the following
         .allowlist_var("TRUE")
         .allowlist_var("FALSE")
         .allowlist_var("CONSOLWIDTH")
@@ -69,8 +69,8 @@ fn main() {
         .allowlist_var("CANONGNIL")
         .allowlist_var("NAUABORTED")
         .allowlist_var("NAUKILLED")
-    // and this is completely off (linker error)
-    // .allowlist_var("bit")
+        // and this is completely off (linker error)
+        // .allowlist_var("bit")
         .allowlist_var("NAUTYVERSIONID")
         .allowlist_var("WORDSIZE")
         .allowlist_var("stderr")
@@ -82,12 +82,11 @@ fn main() {
     bindings
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
-
 }
 
 #[cfg(feature = "bundled")]
 fn compile_nauty<K: AsRef<str>, V: AsRef<str>>(
-    defines: &HashMap<K, Option<V>>
+    defines: &HashMap<K, Option<V>>,
 ) {
     const NAUTY_DIR: &str = "nauty27r4";
     const NAUTY_HEADERS: [&str; 16] = [
@@ -142,7 +141,9 @@ fn compile_nauty<K: AsRef<str>, V: AsRef<str>>(
     }
 
     cc_cmd.warnings(false).files(
-        NAUTY_SRC_FILES.iter().map(|f| PathBuf::from_iter(["src", NAUTY_DIR, f]))
+        NAUTY_SRC_FILES
+            .iter()
+            .map(|f| PathBuf::from_iter(["src", NAUTY_DIR, f])),
     );
 
     cc_cmd.compile("nauty_bundled");
@@ -150,7 +151,7 @@ fn compile_nauty<K: AsRef<str>, V: AsRef<str>>(
 
 fn get_nauty_defines() -> HashMap<&'static str, Option<&'static str>> {
     if !cfg!(feature = "bundled") {
-        return HashMap::new()
+        return HashMap::new();
     }
     let mut defines = HashMap::new();
 
@@ -176,7 +177,7 @@ fn get_nauty_defines() -> HashMap<&'static str, Option<&'static str>> {
 }
 
 fn c_defines<K: Display, V: Display>(
-    defines: &HashMap<K, Option<V>>
+    defines: &HashMap<K, Option<V>>,
 ) -> String {
     let mut define_str = String::new();
     for (key, val) in defines.iter() {
