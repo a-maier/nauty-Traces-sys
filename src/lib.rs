@@ -34,7 +34,8 @@ pub const bit: [set; set::BITS as usize] = {
 };
 
 pub fn SETWORDSNEEDED(n: usize) -> usize {
-    n.div_ceil(&(WORDSIZE as usize))
+    // TODO: use standard library function as soon as it's available
+    Integer::div_ceil(&n, &(WORDSIZE as usize))
 }
 
 impl std::default::Default for optionblk {
