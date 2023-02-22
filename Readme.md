@@ -150,3 +150,6 @@ faster but less portable.
 
 - `native`: Allow processor instructions that are specific to the
   current hardware. Implies `clz` and `popcnt`.
+
+
+License: Apache-2.0
