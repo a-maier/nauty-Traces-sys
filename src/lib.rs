@@ -191,7 +191,7 @@ pub fn SETBT(pos: usize) -> usize {
 }
 
 #[cfg(feature = "libc")]
-pub fn DYNFREE<T>(ptr: &mut *mut T, len: &mut size_t) {
+pub fn DYNFREE<T>(ptr: &mut *mut T, len: &mut usize) {
     unsafe {
         libc::free(*ptr as *mut libc::c_void);
     }
@@ -226,7 +226,7 @@ impl std::default::Default for sparsegraph {
 /// Sparse graph with allocated memory
 #[derive(Debug, Default, Clone)]
 pub struct SparseGraph {
-    pub v: Vec<size_t>,
+    pub v: Vec<usize>,
     pub d: Vec<c_int>,
     pub e: Vec<c_int>,
 }
@@ -246,14 +246,14 @@ impl<'a> std::convert::From<&'a mut SparseGraph> for sparsegraph {
     fn from(g: &'a mut SparseGraph) -> Self {
         sparsegraph {
             nv: g.v.len() as c_int,
-            nde: g.e.len() as size_t,
+            nde: g.e.len(),
             v: g.v.as_mut_ptr(),
             d: g.d.as_mut_ptr(),
             e: g.e.as_mut_ptr(),
             w: std::ptr::null_mut(),
-            vlen: g.v.len() as size_t,
-            dlen: g.d.len() as size_t,
-            elen: g.e.len() as size_t,
+            vlen: g.v.len(),
+            dlen: g.d.len(),
+            elen: g.e.len(),
             wlen: 0,
         }
     }
@@ -425,7 +425,7 @@ mod tests {
             );
 
             for i in 0..n {
-                sg.v[i] = 2 * i as size_t;
+                sg.v[i] = 2 * i as usize;
                 sg.d[i] = 2;
                 sg.e[2 * i] = ((i + n - 1) % n) as c_int; /* edge i->i-1 */
                 sg.e[2 * i + 1] = ((i + n + 1) % n) as c_int; /* edge i->i+1 */
@@ -491,7 +491,7 @@ mod tests {
             );
 
             for i in 0..n {
-                sg1.v[i] = (3 * i) as size_t; /* Position of vertex i in v array */
+                sg1.v[i] = (3 * i) as usize; /* Position of vertex i in v array */
                 sg1.d[i] = 3; /* Degree of vertex i */
             }
 
@@ -523,12 +523,12 @@ mod tests {
 
             // // this is redundant already in nautyex5.c
             // for i in 0..n {
-            //     sg2.v[i] = (3*i) as size_t;
+            //     sg2.v[i] = (3*i) as usize;
             //     sg2.d[i] = 3;
             // }
 
             for i in 0..n {
-                sg2.v[i] = (3 * i) as size_t;
+                sg2.v[i] = (3 * i) as usize;
                 sg2.d[i] = 3;
                 sg2.e[sg2.v[i] as usize] = ((i + 1) % n) as c_int; /* Clockwise */
                 sg2.e[(sg2.v[i] + 1) as usize] = ((i + n - 1) % n) as c_int; /* Anti-clockwise */
@@ -727,7 +727,7 @@ mod tests {
             );
 
             for i in 0..n {
-                sg1.v[i] = (3 * i) as size_t; /* Position of vertex i in v array */
+                sg1.v[i] = (3 * i) as usize; /* Position of vertex i in v array */
                 sg1.d[i] = 3; /* Degree of vertex i */
             }
 
@@ -758,7 +758,7 @@ mod tests {
             );
 
             for i in 0..n {
-                sg2.v[i] = (3 * i) as size_t;
+                sg2.v[i] = (3 * i) as usize;
                 sg2.d[i] = 3;
                 sg2.e[(sg2.v[i]) as usize] = ((i + 1) % n) as c_int; /* Clockwise */
                 sg2.e[(sg2.v[i] + 1) as usize] = ((i + n - 1) % n) as c_int; /* Anti-clockwise */
@@ -986,7 +986,7 @@ mod tests {
             );
 
             for i in 0..n {
-                sg.v[i] = (i * deg) as size_t; /* Position of vertex i in v array */
+                sg.v[i] = (i * deg) as usize; /* Position of vertex i in v array */
                 sg.d[i] = deg as c_int; /* Degree of vertex i */
             }
 
@@ -1087,7 +1087,7 @@ mod tests {
             );
 
             for i in 0..n {
-                sg1.v[i] = (3 * i) as size_t; /* Position of vertex i in v array */
+                sg1.v[i] = (3 * i) as usize; /* Position of vertex i in v array */
                 sg1.d[i] = 3; /* Degree of vertex i */
             }
 
@@ -1118,7 +1118,7 @@ mod tests {
             );
 
             for i in 0..n {
-                sg2.v[i] = (3 * i) as size_t;
+                sg2.v[i] = (3 * i) as usize;
                 sg2.d[i] = 3;
                 sg2.e[sg2.v[i] as usize] = ((i + 1) % n) as c_int; /* Clockwise */
                 sg2.e[(sg2.v[i] + 1) as usize] = ((i + n - 1) % n) as c_int; /* Anti-clockwise */
@@ -1229,7 +1229,7 @@ mod tests {
         );
 
         for i in 0..n {
-            sg.v[i] = 2 * i as size_t;
+            sg.v[i] = 2 * i as usize;
             sg.d[i] = 2;
             sg.e[2 * i] = ((i + n - 1) % n) as c_int; /* edge i->i-1 */
             sg.e[2 * i + 1] = ((i + n + 1) % n) as c_int; /* edge i->i+1 */
