@@ -66,6 +66,7 @@ fn main() {
         .allowlist_function("breakcellwt")
         .allowlist_function("settolist")
         .allowlist_function("listtoset")
+        .allowlist_function("ran_init")
         .allowlist_var("dispatch_graph")
         .allowlist_var("dispatch_sparse")
         // types are off for the following
