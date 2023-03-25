@@ -67,6 +67,8 @@ fn main() {
         .allowlist_function("settolist")
         .allowlist_function("listtoset")
         .allowlist_function("ran_init")
+        .allowlist_function("ran_init_time")
+        .allowlist_function("ran_nextran")
         .allowlist_var("dispatch_graph")
         .allowlist_var("dispatch_sparse")
         // types are off for the following
