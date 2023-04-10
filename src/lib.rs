@@ -39,6 +39,7 @@ pub fn SETWORDSNEEDED(n: usize) -> usize {
 }
 
 impl std::default::Default for optionblk {
+    /// Default options for undirected graphs, equivalent to nauty's DEFAULTOPTIONS_GRAPH.
     fn default() -> Self {
         optionblk {
             getcanon: 0,
@@ -67,34 +68,36 @@ impl std::default::Default for optionblk {
 }
 
 impl optionblk {
+    /// Default options for directed graphs, equivalent to nauty's DEFAULTOPTIONS_DIGRAPH.
+    pub fn default_digraph() -> Self {
+        optionblk {
+            digraph: TRUE,
+            invarproc: Some(adjacencies),
+            maxinvarlevel: 999,
+            ..Self::default()
+        }
+    }
+
+    /// Default options for undirected sparse graphs, equivalent to nauty's DEFAULTOPTIONS_SPARSEGRAPH.
     pub fn default_sparse() -> Self {
         optionblk {
-            getcanon: 0,
-            digraph: FALSE,
-            writeautoms: FALSE,
-            writemarkers: FALSE,
-            defaultptn: TRUE,
-            cartesian: FALSE,
-            linelength: CONSOLWIDTH,
-            outfile: std::ptr::null_mut(),
-            userrefproc: None,
-            userautomproc: None,
-            userlevelproc: None,
-            usernodeproc: None,
-            usercanonproc: None,
-            invarproc: None,
-            tc_level: 100,
-            mininvarlevel: 0,
-            maxinvarlevel: 1,
-            invararg: 0,
             dispatch: unsafe { &mut dispatch_sparse },
-            schreier: FALSE,
-            extra_options: std::ptr::null_mut(),
+            ..Self::default()
+        }
+    }
+
+    /// Default options for directed sparse graphs, equivalent to nauty's DEFAULTOPTIONS_SPARSEDIGRAPH.
+    pub fn default_sparse_digraph() -> Self {
+        optionblk {
+            invarproc: Some(adjacencies_sg),
+            dispatch: unsafe { &mut dispatch_sparse },
+            ..Self::default_digraph()
         }
     }
 }
 
 impl std::default::Default for TracesOptions {
+    /// Default options for undirected graphs, equivalent to Traces' DEFAULTOPTIONS_TRACES.
     fn default() -> Self {
         TracesOptions {
             getcanon: FALSE,
