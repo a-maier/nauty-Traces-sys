@@ -29,11 +29,17 @@ By default, you need a C compiler installed on your system. See the
     - Instead of using `DYNALLSTAT` and `DYNALLOC` you can create
       `Vec`s or arrays.
 
-    - Use the `empty_graph` function in place of `EMPTY_GRAPH`.
-
     - Most `DEFAULT`-type macros have been replaced with
-      implementations of the rust `Default` trait. For `sparsenauty`
-      default options use `optionsblk::default_sparse()`.
+      implementations of the rust `Default` trait.
+
+    - The following macros are implemented as functions:
+
+        | Original macro                 | Replacement                            |
+        |--------------------------------|----------------------------------------|
+        | `EMPTY_GRAPH`                  | `empty_graph`                          |
+        | `DEFAULTOPTIONS_SPARSEGRAPH`   | `optionsblk::default_sparse()`         |
+        | `DEFAULTOPTIONS_DIGRAPH`       | `optionsblk::default_digraph()`        |
+        | `DEFAULTOPTIONS_SPARSEDIGRAPH` | `optionsblk::default_sparse_digraph()` |
 
     - The `SparseGraph` struct helps with creating sparse graphs. A
       `&mut SparseGraph` can be converted to the `sparsegraph` used by
