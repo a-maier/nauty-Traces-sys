@@ -69,6 +69,8 @@ fn main() {
         .allowlist_function("ran_init")
         .allowlist_function("ran_init_time")
         .allowlist_function("ran_nextran")
+        .allowlist_function("adjacencies")
+        .allowlist_function("adjacencies_sg")
         .allowlist_var("dispatch_graph")
         .allowlist_var("dispatch_sparse")
         // types are off for the following
