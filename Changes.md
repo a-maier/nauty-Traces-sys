@@ -1,3 +1,7 @@
+# Version 0.6
+
+- Bindings for digraph default options
+
 # Version 0.5
 
 - Bindings for random number generator functions
