@@ -5,13 +5,13 @@ Procedures for handling groups found by nauty.
 
 #include "naugroup.h"
 
-static permrec *freelist = NULL;
-static int freelist_n = 0;
+static TLS_ATTR permrec *freelist = NULL;
+static TLS_ATTR int freelist_n = 0;
 
-static grouprec *group = NULL;
-static int group_depth = 0;
+static TLS_ATTR grouprec *group = NULL;
+static TLS_ATTR int group_depth = 0;
 DYNALLSTAT(cosetrec,coset,coset_sz);
-static permrec *gens;
+static TLS_ATTR permrec *gens;
 DYNALLSTAT(set,workset,workset_sz);
 DYNALLSTAT(int,allp,allp_sz);
 DYNALLSTAT(int,id,id_sz);
