@@ -1285,12 +1285,13 @@ mod tests {
     ) {
         let mut m = 0;
         let mut g_from_sg = sg_to_nauty(sg, std::ptr::null_mut(), 0, &mut m);
-        let g2 = std::slice::from_raw_parts(
-            g_from_sg as *const graph,
-            n * m as usize,
-        );
-        assert_eq!(&*g, g2);
-        std::mem::drop(g2);
+        {
+            let g2 = std::slice::from_raw_parts(
+                g_from_sg as *const graph,
+                n * m as usize,
+            );
+            assert_eq!(&*g, g2);
+        }
         let mut dummy = 0;
         DYNFREE(&mut g_from_sg, &mut dummy);
     }
