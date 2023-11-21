@@ -22,7 +22,8 @@ By default, you need a C compiler installed on your system. See the
 * You can use either the version of nauty and Traces that is bundled
   with this crate or a local installation. Both options have
   advantages and disadvantages. See the [Features section](#features)
-  below.
+  below. Note that version 0.7 of this crate assumes nauty & Traces
+  version 2.8.8 and may not work with other versions.
 
 * Some C macros have no direct equivalent.
 
