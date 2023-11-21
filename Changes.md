@@ -1,3 +1,7 @@
+# Version 0.7
+
+- Update to nauty and Traces 2\_8\_8
+
 # Version 0.6
 
 - Bindings for digraph default options
