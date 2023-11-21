@@ -111,7 +111,7 @@ impl std::default::Default for TracesOptions {
             verbosity: 0,
             generators: std::ptr::null_mut(),
             userautomproc: None,
-            usercanonproc: None,
+            reserved: std::ptr::null_mut(),
             weighted: FALSE,
         }
     }
