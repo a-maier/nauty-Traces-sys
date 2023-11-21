@@ -22,7 +22,7 @@ fn main() {
     let bindings = bindgen::Builder::default()
         .header_contents("nauty-flags.h", &c_defines(&defines))
         .header(wrapper)
-        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .derive_eq(true)
         .derive_hash(true)
         .derive_ord(true)
