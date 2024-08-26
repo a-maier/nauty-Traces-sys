@@ -1,6 +1,6 @@
 [package]
 name = "nauty-Traces-sys"
-version = "0.7.0"
+version = "0.8.0"
 authors = ["Andreas Maier <andreas.martin.maier@desy.de>"]
 edition = "2021"
 description = "Low-level bindings for nauty and Traces"
