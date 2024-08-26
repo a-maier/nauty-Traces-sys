@@ -1,3 +1,8 @@
+# Version 0.8
+
+- Update to nauty and Traces 2\_8\_9
+- Fixes for `popcnt` and `lzc` features
+
 # Version 0.7
 
 - Update to nauty and Traces 2\_8\_8
