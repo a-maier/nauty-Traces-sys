@@ -23,6 +23,6 @@ default = ["bundled", "tls"]
 bundled = ["cc", "libc"]
 tls = ["bundled"]
 # TOOD: detect c compiler support
-clz = ["bundled"]
+lzc = ["bundled"]
 popcnt = ["bundled"]
-native = ["bundled", "clz", "popcnt"]
+native = ["bundled", "lzc", "popcnt"]

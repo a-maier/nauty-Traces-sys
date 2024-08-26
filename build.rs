@@ -181,7 +181,7 @@ fn get_nauty_defines() -> HashMap<&'static str, Option<&'static str>> {
         defines.insert("HAVE_HWPOPCNT", None);
     }
 
-    #[cfg(feature = "lcz")]
+    #[cfg(feature = "lzc")]
     if is_x86_feature_detected!("lzcnt") {
         defines.insert("HAVE_HWLZCNT", None);
     }
