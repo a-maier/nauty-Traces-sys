@@ -11,7 +11,7 @@ Add the following lines to your Cargo.toml:
 
 ```toml
 [dependencies]
-nauty-Traces-sys = "0.7"
+nauty-Traces-sys = "0.8"
 ```
 
 By default, you need a C compiler installed on your system. See the
@@ -22,8 +22,8 @@ By default, you need a C compiler installed on your system. See the
 * You can use either the version of nauty and Traces that is bundled
   with this crate or a local installation. Both options have
   advantages and disadvantages. See the [Features section](#features)
-  below. Note that version 0.7 of this crate assumes nauty & Traces
-  version 2.8.8 and may not work with other versions.
+  below. Note that version 0.8 of this crate assumes nauty & Traces
+  version 2.8.9 and may not work with other versions.
 
 * Some C macros have no direct equivalent.
 
@@ -151,12 +151,12 @@ guidance on features.
 Activating the following features may make the generated binaries
 faster but less portable.
 
-- `clz`: Allow using the `lzcnt` processor instruction, if available.
+- `lzc`: Allow using the `lzcnt` processor instruction, if available.
 
 - `popcnt`: Allow using the `popcnt` processor instruction, if available.
 
 - `native`: Allow processor instructions that are specific to the
-  current hardware. Implies `clz` and `popcnt`.
+  current hardware. Implies `lzc` and `popcnt`.
 
 
 License: Apache-2.0
