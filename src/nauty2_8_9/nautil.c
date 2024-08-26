@@ -728,7 +728,7 @@ nautil_check(int wordsize, int m, int n, int version)
 *                                                                            *
 *****************************************************************************/
 
-void
+void NORET_ATTR
 alloc_error(const char *s)
 {
     fprintf(ERRFILE,"Dynamic allocation failed: %s\n",s);

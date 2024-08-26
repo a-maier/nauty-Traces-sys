@@ -86,7 +86,7 @@ pathcount1(graph *g, int start, setword body, setword last)
 
 long
 cyclecount1(graph *g, int n)
-/* The total number of cycles in g (assumed no loops), m=1 only */
+/* The total number of cycles in g (assuming no loops), m=1 only */
 {
     setword body,nbhd;
     long total;
@@ -113,7 +113,7 @@ cyclecount1(graph *g, int n)
 
 long
 cyclecount(graph *g, int m, int n)
-/* The total number of cycles in g (assumed no loops) */
+/* The total number of cycles in g (assuming no loops) */
 {
     if (n == 0) return 0;
     if (m == 1) return cyclecount1(g,n);
@@ -152,7 +152,7 @@ indpathcount1(graph *g, int start, setword body, setword last)
 
 long
 indcyclecount1(graph *g, int n)
-/* The total number of induced cycles in g (assumed no loops), m=1 only */
+/* The total number of induced cycles in g (assuming no loops), m=1 only */
 {
     setword body,last,cni;
     long total;
@@ -180,7 +180,7 @@ indcyclecount1(graph *g, int n)
 
 long
 indcyclecount(graph *g, int m, int n)
-/* The total number of induced cycles in g (assumed no loops) */
+/* The total number of induced cycles in g (assuming no loops) */
 {
     if (n == 0) return 0;
     if (m == 1) return indcyclecount1(g,n);

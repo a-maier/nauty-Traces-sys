@@ -37,7 +37,7 @@
  *
  *   Note that C doesn't like SORT_TYPE1 and SORT_TYPE2 to be defined
  *   as explicit pointer types like int*.  The simplest work-around
- *   is to define a type, e.g. typedef intptr int*  then use that.
+ *   is to define a type, e.g. "typedef int* intptr;" then use that.
  *
  *   SORT_MINPARTITION = least number of elements for using quicksort
  *           partitioning, otherwise insertion sort is used (default "11") 

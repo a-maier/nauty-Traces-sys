@@ -9,10 +9,13 @@
    Sep  5, 2013 : Unify format processing and remove 2^22 limit
    Oct 14, 2017 : Include code for n=0
    Sep 28, 2019 : Define breakcellwt
+   Mar 26, 2024 : Increase workspace to match densenauty()
+   Apr 13, 2024 : Make setlabptnfmt global and generalize.
 
 **************************************************************************/
 
 #include "gtools.h"   /* which includes naututil.h, nausparse.h, stdio.h */
+#include "nautinv.h"
 
 static boolean issymm;
 static set *g0;
@@ -104,12 +107,25 @@ breakcellwt(int *weight, int *lab, int *ptn, int n1, int n2)
     return nc;
 }
 
-static int
+int
 setlabptnfmt(char *fmt, int *lab, int *ptn, set *active, int m, int n)
 /* Define (lab,ptn,active) according to format string.
-   Return number of cells */
+   The format string is a string of characters assumed extended forever
+   with 'z'. The shortcut c^N, where N is an integer, means c repeated
+   N times.
+
+   Grammar:  ( '-' | ) (<char> | <char> '^' <number>)^*
+
+   The cells of the partition are defined by the character for each
+   vertex in ascii order. If fmt starts with '-', vertices are counted
+   backwards starting from vertices n-1 and reverse ascii order is used.
+
+   active is not set if it is NULL.
+   Return the number of cells.  */
 {
-    int i,nc;
+    int i,j,mult,a,b,nc;
+    unsigned char *s,*t;
+    boolean minus;
 #if MAXN
     int wt[MAXN];
 #else
@@ -120,27 +136,85 @@ setlabptnfmt(char *fmt, int *lab, int *ptn, set *active, int m, int n)
 
     if (n == 0) return 0;
 
-    EMPTYSET(active,m);
-    ADDELEMENT(active,0);
-    nc = 1;
+    if (active != NULL)
+    {
+        EMPTYSET(active,m);
+        ADDELEMENT(active,0);
+    }
 
     if (fmt != NULL && fmt[0] != '\0')
     {
 #if !MAXN
         DYNALLOC1(int,wt,wt_sz,n,"setlabptnfmt");
 #endif
-        for (i = 0; i < n && fmt[i] != '\0'; ++i)
-            wt[i] = (unsigned char)fmt[i];
-        for ( ; i < n; ++i)
-            wt[i] = 'z';
+        if (fmt[0] == '-')
+        {
+            minus = TRUE;
+            s = (unsigned char*)(fmt+1);
+        }
+        else
+        {
+            minus = FALSE;
+            s = (unsigned char*)fmt;
+        }
 
-        setlabptn(wt,lab,ptn,n);
-        for (i = 0; i < n-1; ++i)
-            if (ptn[i] == 0)
+        i = 0;
+        while (i < n && *s != '\0')
+        {
+            if (*(s+1) == '^' && *(s+2) >= '0' && *(s+2) <= '9')
             {
-                ++nc;
-                ADDELEMENT(active,i+1);
+                t = s+2;
+                mult = 0;
+                while (*t >= '0' && *t <= '9')
+                {
+                    mult = mult*10 + (*t - '0');
+                    ++t;
+                }
             }
+            else
+            {
+                mult = 1;
+                t = s+1;
+            }
+            for (j = 0; j < mult && i < n; ++i, ++j)
+                wt[i] = (int)(*s);
+            s = t;
+        }
+
+        for ( ; i < n; ++i) wt[i] = (int)('z');
+
+        for (i = 0; i < n; ++i) lab[i] = i;
+        if (minus)
+        {
+            for (i = 0, j = n-1; i <= j; ++i, --j)
+            {
+                a = wt[i];
+                b = wt[j];
+                wt[i] = -b;
+                wt[j] = -a;
+            }
+        }
+
+        sortwt(lab,wt,n);
+
+        nc = 1;
+        for (i = 0; i < n-1; ++i)
+        {
+            if (wt[lab[i]] != wt[lab[i+1]])
+            {
+                ptn[i] = 0;
+                ++nc;
+            }
+            else
+                ptn[i] = 1;
+        }
+        ptn[n-1] = 0;
+
+        if (active != NULL)
+        {
+            for (i = 0; i < n-1; ++i)
+                if (ptn[i] == 0) ADDELEMENT(active,i+1);
+        }
     }
     else
     {
@@ -150,6 +224,7 @@ setlabptnfmt(char *fmt, int *lab, int *ptn, set *active, int m, int n)
             ptn[i] = 1;
         }
         ptn[n-1] = 0;
+        nc = 1;
     }
 
     return nc;
@@ -199,7 +274,7 @@ fcanonise(graph *g, int m, int n, graph *h, char *fmt, boolean digraph)
     int lab[MAXN],ptn[MAXN],orbits[MAXN];
     int count[MAXN];
     set active[MAXM];
-    setword workspace[24*MAXM];
+    setword workspace[2*500*MAXM];
 #else
     DYNALLSTAT(int,lab,lab_sz);
     DYNALLSTAT(int,ptn,ptn_sz);
@@ -227,7 +302,7 @@ fcanonise(graph *g, int m, int n, graph *h, char *fmt, boolean digraph)
     DYNALLOC1(int,orbits,orbits_sz,n,"fcanonise");
     DYNALLOC1(int,count,count_sz,n,"fcanonise");
     DYNALLOC1(set,active,active_sz,m,"fcanonise");
-    DYNALLOC1(setword,workspace,workspace_sz,24*m,"fcanonise");
+    DYNALLOC1(setword,workspace,workspace_sz,2*500*m,"fcanonise");
 #endif
 
     digraph = digraph || hasloops(g,m,n);
@@ -257,7 +332,7 @@ fcanonise(graph *g, int m, int n, graph *h, char *fmt, boolean digraph)
 
         EMPTYSET(active,m);
         nauty(g,lab,ptn,active,orbits,&options,&stats,
-                                              workspace,24*m,m,n,h);
+                                              workspace,2*500*m,m,n,h);
         gt_numorbits = stats.numorbits;
     }
 }
@@ -280,7 +355,7 @@ fcanonise_inv(graph *g, int m, int n, graph *h, char *fmt,
     int lab[MAXN],ptn[MAXN],orbits[MAXN];
     int count[MAXN];
     set active[MAXM];
-    setword workspace[24*MAXM];
+    setword workspace[2*500*MAXM];
 #else
     DYNALLSTAT(int,lab,lab_sz);
     DYNALLSTAT(int,ptn,ptn_sz);
@@ -308,7 +383,7 @@ fcanonise_inv(graph *g, int m, int n, graph *h, char *fmt,
     DYNALLOC1(int,orbits,orbits_sz,n,"fcanonise");
     DYNALLOC1(int,count,count_sz,n,"fcanonise");
     DYNALLOC1(set,active,active_sz,m,"fcanonise");
-    DYNALLOC1(setword,workspace,workspace_sz,24*m,"fcanonise");
+    DYNALLOC1(setword,workspace,workspace_sz,2*500*m,"fcanonise");
 #endif
 
     numcells = setlabptnfmt(fmt,lab,ptn,active,m,n);
@@ -343,7 +418,7 @@ fcanonise_inv(graph *g, int m, int n, graph *h, char *fmt,
         if (n >= MIN_SCHREIER) options.schreier = TRUE;
 
         EMPTYSET(active,m);
-        nauty(g,lab,ptn,active,orbits,&options,&stats,workspace,24*m,m,n,h);
+        nauty(g,lab,ptn,active,orbits,&options,&stats,workspace,2*500*m,m,n,h);
         gt_numorbits = stats.numorbits;
     }
 }
@@ -366,7 +441,7 @@ fcanonise_inv_sg(sparsegraph *g, int m, int n, sparsegraph *h, char *fmt,
     int lab[MAXN],ptn[MAXN],orbits[MAXN];
     int count[MAXN];
     set active[MAXM];
-    setword workspace[24*MAXM];
+    setword workspace[2*500*MAXM];
 #else
     DYNALLSTAT(int,lab,lab_sz);
     DYNALLSTAT(int,ptn,ptn_sz);
@@ -399,7 +474,7 @@ fcanonise_inv_sg(sparsegraph *g, int m, int n, sparsegraph *h, char *fmt,
     DYNALLOC1(int,orbits,orbits_sz,n,"fcanonise");
     DYNALLOC1(int,count,count_sz,n,"fcanonise");
     DYNALLOC1(set,active,active_sz,m,"fcanonise");
-    DYNALLOC1(setword,workspace,workspace_sz,24*m,"fcanonise");
+    DYNALLOC1(setword,workspace,workspace_sz,2*500*m,"fcanonise");
 #endif
 
     numcells = setlabptnfmt(fmt,lab,ptn,active,m,n);
@@ -432,7 +507,7 @@ fcanonise_inv_sg(sparsegraph *g, int m, int n, sparsegraph *h, char *fmt,
 
         EMPTYSET(active,m);
         nauty((graph*)g,lab,ptn,active,orbits,&options,&stats,
-                                         workspace,24*m,m,n,(graph*)h);
+                                         workspace,2*500*m,m,n,(graph*)h);
         gt_numorbits = stats.numorbits;
     }
 }
@@ -451,7 +526,7 @@ fgroup(graph *g, int m, int n, char *fmt, int *orbits, int *numorbits)
     int lab[MAXN],ptn[MAXN];
     int count[MAXN];
     set active[MAXM];
-    setword workspace[24*MAXM];
+    setword workspace[2*500*MAXM];
 #else
     DYNALLSTAT(int,lab,lab_sz);
     DYNALLSTAT(int,ptn,ptn_sz);
@@ -483,7 +558,7 @@ fgroup(graph *g, int m, int n, char *fmt, int *orbits, int *numorbits)
     DYNALLOC1(int,ptn,ptn_sz,n,"fcanonise");
     DYNALLOC1(int,count,count_sz,n,"fcanonise");
     DYNALLOC1(set,active,active_sz,m,"fcanonise");
-    DYNALLOC1(setword,workspace,workspace_sz,24*m,"fcanonise");
+    DYNALLOC1(setword,workspace,workspace_sz,2*500*m,"fcanonise");
 #endif
 
     numcells = setlabptnfmt(fmt,lab,ptn,active,m,n);
@@ -528,7 +603,7 @@ fgroup(graph *g, int m, int n, char *fmt, int *orbits, int *numorbits)
         if (n >= MIN_SCHREIER) options.schreier = TRUE;
 
         EMPTYSET(active,m);
-        nauty(g,lab,ptn,active,orbits,&options,&stats,workspace,24*m,m,n,NULL);
+        nauty(g,lab,ptn,active,orbits,&options,&stats,workspace,2*500*m,m,n,NULL);
         *numorbits = gt_numorbits = stats.numorbits;
     }
 }
@@ -551,7 +626,7 @@ fgroup_inv(graph *g, int m, int n, char *fmt, int *orbits, int *numorbits,
     int lab[MAXN],ptn[MAXN];
     int count[MAXN];
     set active[MAXM];
-    setword workspace[24*MAXM];
+    setword workspace[2*500*MAXM];
 #else
     DYNALLSTAT(int,lab,lab_sz);
     DYNALLSTAT(int,ptn,ptn_sz);
@@ -583,7 +658,7 @@ fgroup_inv(graph *g, int m, int n, char *fmt, int *orbits, int *numorbits,
     DYNALLOC1(int,ptn,ptn_sz,n,"fcanonise");
     DYNALLOC1(int,count,count_sz,n,"fcanonise");
     DYNALLOC1(set,active,active_sz,m,"fcanonise");
-    DYNALLOC1(setword,workspace,workspace_sz,24*m,"fcanonise");
+    DYNALLOC1(setword,workspace,workspace_sz,2*500*m,"fcanonise");
 #endif
 
     numcells = setlabptnfmt(fmt,lab,ptn,active,m,n);
@@ -635,7 +710,7 @@ fgroup_inv(graph *g, int m, int n, char *fmt, int *orbits, int *numorbits,
         if (n >= MIN_SCHREIER) options.schreier = TRUE;
 
         EMPTYSET(active,m);
-        nauty(g,lab,ptn,active,orbits,&options,&stats,workspace,24*m,m,n,NULL);
+        nauty(g,lab,ptn,active,orbits,&options,&stats,workspace,2*500*m,m,n,NULL);
         *numorbits = gt_numorbits = stats.numorbits;
     }
 }
@@ -687,7 +762,7 @@ istransitive(graph *g, int m, int n, graph *h)
     static DEFAULTOPTIONS_GRAPH(options);
 #if MAXN
     int lab[MAXN],ptn[MAXN],orbits[MAXN];
-    setword workspace[24*MAXM];
+    setword workspace[2*500*MAXM];
     set workset[MAXM];
     set sofar[MAXM],frontier[MAXM];
 #else
@@ -713,7 +788,7 @@ istransitive(graph *g, int m, int n, graph *h)
     DYNALLOC1(int,lab,lab_sz,n,"istransitive");
     DYNALLOC1(int,ptn,ptn_sz,n,"istransitive");
     DYNALLOC1(int,orbits,orbits_sz,n,"istransitive");
-    DYNALLOC1(setword,workspace,workspace_sz,24*m,"istransitive");
+    DYNALLOC1(setword,workspace,workspace_sz,2*500*m,"istransitive");
     DYNALLOC1(set,workset,workset_sz,m,"istransitive");
     DYNALLOC1(set,sofar,sofar_sz,m,"istransitive");
     DYNALLOC1(set,frontier,frontier_sz,m,"istransitive");
@@ -752,6 +827,7 @@ istransitive(graph *g, int m, int n, graph *h)
 
     options.getcanon = TRUE;
     options.userlevelproc = userlevel;
+    if (hasloops(g,m,n)) options.digraph = TRUE;
 #ifdef REFINE
     options.userrefproc = REFINE;
 #endif
@@ -761,7 +837,7 @@ istransitive(graph *g, int m, int n, graph *h)
     g0 = (set*) g;
     gm = m;
 
-    nauty(g,lab,ptn,NULL,orbits,&options,&stats,workspace,24*m,m,n,h);
+    nauty(g,lab,ptn,NULL,orbits,&options,&stats,workspace,2*500*m,m,n,h);
 
     if (stats.numorbits != 1) return 0;
     else if (!issymm)         return 1;
@@ -778,7 +854,7 @@ tg_canonise(graph *g, graph *h, int m, int n)
 #if MAXN
     int lab[MAXN],ptn[MAXN],orbits[MAXN];
     set active[MAXM];
-    setword workspace[24*MAXM];
+    setword workspace[2*500*MAXM];
 #else
     DYNALLSTAT(int,lab,lab_sz);
     DYNALLSTAT(int,ptn,ptn_sz);
@@ -800,13 +876,14 @@ tg_canonise(graph *g, graph *h, int m, int n)
     DYNALLOC1(int,ptn,ptn_sz,n,"tg_canonise");
     DYNALLOC1(int,orbits,orbits_sz,n,"tg_canonise");
     DYNALLOC1(set,active,active_sz,m,"tg_canonise");
-    DYNALLOC1(setword,workspace,workspace_sz,24*m,"tg_canonise");
+    DYNALLOC1(setword,workspace,workspace_sz,2*500*m,"tg_canonise");
 #endif
 
     if (n == 0) return;
 
     options.getcanon = TRUE;
     options.defaultptn = FALSE;
+    if (hasloops(g,m,n)) options.digraph = TRUE;
 #ifdef REFINE
     options.userrefproc = REFINE;
 #endif
@@ -822,5 +899,247 @@ tg_canonise(graph *g, graph *h, int m, int n)
     ADDELEMENT(active,0);
 
     if (n >= MIN_SCHREIER) options.schreier = TRUE;
-    nauty(g,lab,ptn,active,orbits,&options,&stats,workspace,24*m,m,n,h);
+    nauty(g,lab,ptn,active,orbits,&options,&stats,workspace,2*500*m,m,n,h);
+}
+
+/***********************************************************************/
+
+typedef struct arc_st { int from,to; } arc;
+
+DYNALLSTAT(arc,arclist,arclist_sz);
+DYNALLSTAT(size_t,arcorbits,arcorbits_sz);
+static TLS_ATTR size_t numarcs,numarcorbits;
+static TLS_ATTR graph *g_save;
+static TLS_ATTR int m_save;
+
+static size_t
+findarc(arc *a, int na, int from, int to)
+/* Find position of from->to.  (Must be present.) */
+{
+    size_t lo,mid,hi;
+
+    lo = 0;
+    hi = na - 1;
+
+    while (lo <= hi)
+    {
+        mid = lo + (hi - lo) / 2;
+        if (a[mid].from == from)
+        {
+            if (a[mid].to == to)
+                return mid;
+            else if (a[mid].to > to)
+                hi = mid - 1;
+            else
+                lo = mid + 1;
+        }
+        else if (a[mid].from > from)
+            hi = mid - 1;
+        else
+            lo = mid + 1;
+    }
+    gt_abort(">E findarc error\n");
+}
+
+void
+arcorbitjoin(int ngens, int *p, int *orbs, int numorbs, int stab, int n)
+/* p is a vertex permutation. Apply it to arcorbits. */
+{
+    size_t i,pi,j1,j2,t;
+    int ii,jj,m;
+    graph *gi;
+
+    if (ngens == 1)
+    {
+        m = m_save;
+        DYNALLOC1(arc,arclist,arclist_sz,numarcs,"countorbits");
+        DYNALLOC1(size_t,arcorbits,arcorbits_sz,numarcs,"countorbits");
+
+        t = 0;
+        for (ii = 0, gi = g_save; ii < n; ++ii, gi += m)
+        {
+            for (jj = -1; (jj = nextelement(gi,m,jj)) >= 0; )
+            {
+                arclist[t].from = ii;
+                arclist[t].to = jj;
+                ++t;
+            }
+        }
+        for (i = 0; i < numarcs; ++i) arcorbits[i] = i;
+
+        numarcorbits = 0;
+        for (i = 0; i < numarcs; ++i)
+        if (arcorbits[i] == i)
+        {
+            ++numarcorbits;
+            pi = i;
+            do
+            {
+                pi = findarc(arclist,numarcs,
+                        p[arclist[pi].from],p[arclist[pi].to]);
+                arcorbits[pi] = i;
+            } while (pi != i);
+        }
+
+        return;
+    }
+
+    for (i = 0; i < numarcs; ++i)
+    {
+        pi = findarc(arclist,numarcs,p[arclist[i].from],p[arclist[i].to]);
+
+        if (pi != i)
+        {
+            j1 = arcorbits[i];
+            while (arcorbits[j1] != j1) j1 = arcorbits[j1];
+            j2 = arcorbits[pi];
+            while (arcorbits[j2] != j2) j2 = arcorbits[j2];
+
+            if (j1 < j2)      arcorbits[j2] = j1;
+            else if (j1 > j2) arcorbits[j1] = j2;
+        }
+    }
+
+    numarcorbits = 0;
+    for (i = 0; i < numarcs; ++i)
+        if ((arcorbits[i] = arcorbits[arcorbits[i]]) == i) ++numarcorbits;
+}
+
+static size_t
+arcorbtoedgeorb(void)
+/* Convert arc orbits to edge orbits; strictly undirected only */
+{
+    size_t i,pi,j1,j2,numedgeorbits;
+
+    for (i = 0; i < numarcs; ++i)
+    {
+        if (arclist[i].from < arclist[i].to)
+        {
+            pi = findarc(arclist,numarcs,arclist[i].to,arclist[i].from);
+
+            j1 = arcorbits[i];
+            while (arcorbits[j1] != j1) j1 = arcorbits[j1];
+            j2 = arcorbits[pi];
+            while (arcorbits[j2] != j2) j2 = arcorbits[j2];
+
+            if (j1 < j2)      arcorbits[j2] = j1;
+            else if (j1 > j2) arcorbits[j1] = j2;
+        }
+    }
+
+    numedgeorbits = 0;
+    for (i = 0; i < numarcs; ++i)
+        if ((arcorbits[i] = arcorbits[arcorbits[i]]) == i) ++numedgeorbits;
+
+    return numedgeorbits;
+}
+
+void
+countorbits_sg(sparsegraph *sg, boolean digraph,
+        double *grpsize1, int *grpsize2,
+        int *vorbits, int *fixedpts, size_t *eorbits, size_t *aorbits)
+/* Find:
+   (grpsize1,grpsize2) = group size as in the nauty options structure.
+   vorbits = number of orbits on vertices
+   fixedpts = number of fixed points on vertices
+   eorbits = number of orbits on undirected edges
+   aorbits = number of orbits on directed edges
+   In the case of digraphs, eorbits is set equal to aorbits.
+*/ 
+{
+    gt_abort(">E countorbits_sg is not implemented\n");
+}
+
+void
+countorbits(graph *g, int m, int n, boolean digraph,
+        double *grpsize1, int *grpsize2, int *vorbits,
+        int *fixedpts, size_t *eorbits, size_t *aorbits)
+/* Find:
+   (grpsize1,grpsize2) = group size as in the nauty options structure.
+   vorbits = number of orbits on vertices
+   fixedpts = number of fixed points on vertices
+   eorbits = number of orbits on undirected edges
+   aorbits = number of orbits on directed edges
+   In the case of digraphs, eorbits is set equal to aorbits.
+*/ 
+{
+    graph *gi;
+    size_t t;
+    int loops,i,fixed;
+    statsblk stats;
+    static DEFAULTOPTIONS_GRAPH(goptions);
+    static DEFAULTOPTIONS_DIGRAPH(doptions);
+    DYNALLSTAT(int,lab,lab_sz);
+    DYNALLSTAT(int,ptn,ptn_sz);
+    DYNALLSTAT(int,orbits,orbits_sz);
+    DYNALLSTAT(setword,work,work_sz);
+
+    numarcs = 0;
+    for (t = 0; t < m*(size_t)n; ++t) numarcs += POPCOUNT(g[t]);
+
+    if (numarcs == 0)
+    {
+        *grpsize1 = 1.0;
+        *grpsize2 = 0;
+        for (i = 2; i <= n; ++i) MULTIPLY(*grpsize1,*grpsize2,i);
+        *vorbits = 1;
+        *fixedpts = (n == 1 ? 1 : 0);
+        *eorbits = 1;
+        *aorbits = 1;
+        return;
+    }
+    loops = 0;
+    for (i = 0, gi = g; i < n; ++i, gi += m)
+        if (ISELEMENT(gi,i)) ++loops;
+
+    g_save = g;
+    m_save = m;
+
+    DYNALLOC1(int,lab,lab_sz,n,"countorbits");
+    DYNALLOC1(int,ptn,ptn_sz,n,"countorbits");
+    DYNALLOC1(int,orbits,orbits_sz,n,"countorbits");
+    DYNALLOC1(setword,work,work_sz,2*500*m,"countorbits");
+
+    if (digraph)
+    {
+        doptions.userautomproc = arcorbitjoin;
+        nauty(g,lab,ptn,NULL,orbits,&doptions,&stats,work,2*500*m,m,n,NULL);
+    }
+    else
+    {
+        goptions.userautomproc = arcorbitjoin;
+        if (loops > 0) goptions.digraph = TRUE; 
+        nauty(g,lab,ptn,NULL,orbits,&goptions,&stats,work,2*500*m,m,n,NULL);
+    }
+ 
+    *grpsize1 = stats.grpsize1;
+    *grpsize2 = stats.grpsize2;
+    *vorbits = stats.numorbits;
+
+    if (*vorbits == n)
+    {
+        *aorbits = numarcs;
+        *eorbits = (digraph ? numarcs : (numarcs + loops) / 2);
+    }
+    else
+    {
+        *aorbits = numarcorbits;
+        *eorbits = (digraph ? numarcorbits : arcorbtoedgeorb());
+    }
+
+    for (i = 0; i < n; ++i) ptn[i] = 0;
+    fixed = stats.numorbits;
+    for (i = 0; i < n; ++i)
+        if (++ptn[orbits[i]] == 2) --fixed;
+    *fixedpts = fixed;
+
+    if (n > 128)
+    {
+        DYNFREE(lab,lab_sz);
+        DYNFREE(ptn,ptn_sz);
+        DYNFREE(orbits,orbits_sz);
+        DYNFREE(work,work_sz);
+        DYNFREE(arclist,arclist_sz);
+        DYNFREE(arcorbits,arcorbits_sz);
+    }
 }

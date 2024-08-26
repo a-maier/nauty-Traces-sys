@@ -17,6 +17,7 @@
 *       18-Aug-12 : fix SG_DECL initialization order                         *
 *       18-Jan-13 : add usercanonproc to default options                     *
 *       17-Dec-15 : add macros for weighted graphs                           *
+*        2-Apr-24 : add SG_TRANSFER                                          *
 *                                                                            *
 *****************************************************************************/
 
@@ -55,6 +56,12 @@ typedef struct
 #define SG_INIT(sg) do { (sg).v = NULL; (sg).d = (sg).e = (sg).w = NULL; \
    (sg).vlen = (sg).dlen = (sg).elen = (sg).wlen = 0; } while(0)
 #define SWG_INIT SG_INIT
+
+#define SG_TRANSFER(sh,sg) do { (sh) = (sg); (sg).v = NULL; \
+   (sg).d = (sg).e = (sg).w = NULL; \
+   (sg).vlen = (sg).dlen = (sg).elen = (sg).wlen = 0; } while(0)
+#define SGW_TRANSFER SG_TRANSFER
+
 #define SG_ALLOC(sg,nlen,ndelen,msg) do { \
    DYNALLOC1(size_t,(sg).v,(sg).vlen,nlen,msg); \
    DYNALLOC1(int,(sg).d,(sg).dlen,nlen,msg); \

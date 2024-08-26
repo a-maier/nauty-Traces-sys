@@ -678,3 +678,98 @@ Changes from nauty 2.7 to nauty 2.8
   with "make TLSinstall".
 
 ----- Now 2.8.8
+
+* The makefile now uses the libtool facility to make both static and
+  dynamic libraries.
+
+* The install target puts package configuration files (*.pc) into
+  ${pkgconfigdir}, not ${pkgconfigexecdir}.  The default location is now
+  ${prefix}/libdata/pkgconfig for FreeBSD and ${libdir}/pkgconfig
+  otherwise.  You can select another location using the option
+  --with-pkgconfigdir=DIR with configure.
+
+* The make target TLSlibs also makes nautyTS.a, nautyTS1.a and, if 128-bit
+  arithmetic is available, nautyTQ.a and nautyTQ1.a. The package configuration
+  files for all nautyT*.a libraries now have -DUSE_TLS in their C options.
+
+* There is a new utility uniqg for filtering by isomorphism class.
+  Use  uniqg --help  for full instructions.
+  This utility uses the SHA256 256-bit cryptographic signature to compare
+  canonically labelled graphs. Though it is theoretically possible for two
+  different graphs to compare equal, years of theoretical effort and
+  centuries of computer time by the cryptology community has failed to
+  find two bit strings with the same signature.
+  Distinct signatures are held in memory, 56 bytes each, so you will run
+  out of memory if you have an extremely large number (more than 19 million
+  per gigabyte). The total number of graphs doesn't matter, just the
+  number of isomorphism classes.
+  A particularly useful facility is that you can specify a file of graphs
+  to exclude from the output.
+  Note that graphs are written in the order they are read. They are not
+  sorted in the manner of shortg.
+
+* vcolg has an option -O for adding loops to vertices with weight 0.
+
+* nauty.h previously defined groupsize1 and groupsize2 as synonyms for
+  grpsize1 and grpsize2 (the names of the group size fields in the stats
+  structure. This dates back to the days when some compilers didn't accept
+  variable names longer than 8 characters and no longer has a purpose.
+  These definitions have now been removed. The correct names for the fields
+  of the stats structure are grpsize1 and grpsize2.
+
+* Fixed the help text for genspecialg -l  (Moebius ladder)
+
+* New options for countg and pickg:
+  --O : number of orbits on edges
+  --OO : number of orbits on directed edges 
+     (--O and --OO are the same for digraphs.)
+  -tt : 2 for arc-transitive, 1 for edge-transitive, 0 for neither.
+
+* hamheuristic -V causes graphs for which a cycle (path with -p) was found
+  to be output, rather than the default which is the opposite.
+
+* assembleg has a new option -k for restricting the number of inputs used
+  to make each output. (Thus, if the inputs are connected, -k will restrict
+  the number of components in the output.)
+
+* productg has a new option -u to take the disjoint union of two graphs.
+
+* delptg has a new option -S# for setting the random number seed (used
+  only in conjunction with -r).  Without -S, the seed is set from the clock.
+
+* The meaning of geng -bT has changed. Previously it could only make forests,
+  so was useless. Now it makes chordal-bipartite graphs, which are bipartite
+  graphs having no induced cycles longer than 4-cycles.
+
+* Dreadnaut can now read undirected graphs with loops. So can dretog.
+
+* The -f option in labelg and shortg is now available for Traces and has a
+  more general syntax. The argument is a string of characters considered
+  extended to infinity with 'z'. Vertices are coloured by the corresponding
+  character and the canonical label arranges them in (ascii) order of colour.
+  The shortcut c^N, where c is a character and N is a number, means N copies
+  of c. Also, starting the string with '-' colours the vertices from the
+  end backwards and arranges them in decreasing ascii order.  Examples:
+  -fa    fix the first vertex, placing it first
+  -fa^4  fix the first 4 vertices as a set, placing them first in some order
+  -fba   fix the first two vertices, placing them second and first
+  -f-a   fix the last vertex, placing it last
+  -f-ba^9999 fix the last vertex, placing it first (assuming n <= 10000)
+
+* listg has a new option -m to write a graph or digraph in Mathematica format.
+
+* The previous definition of NORET_ATTR (which says that a function never
+  returns) didn't work in C++ so I replaced it by code sent by Jerry James.
+
+* planarg now has two options for writing planar embeddings in planarcode.
+  They are only different if the number of vertices is at least 256.
+  -p : write multibyte integers high-order bytes first (big-endian)
+  -P : write multibyte integers low-order bytes first (little-endian)
+
+* subdivideg has a new option -i for performing a series reduction.
+  For undirected graphs, repeatedly replace x--y--z by x--z if
+      x,y are not adjacent and y has no other neighbours.
+  For digraphs, repeatedly replace x->y->z by x->z if x,z are
+      distinct, x->z is not present, and y has no other neighbours.
+
+-- Now 2.8.9

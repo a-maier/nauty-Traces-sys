@@ -3,7 +3,7 @@
 * miscellaneous utilities for use with nauty 2.8.                            *
 * None of these procedures are needed by nauty, but all are by dreadnaut.    *
 *                                                                            *
-*   Copyright (1984-2023) Brendan McKay.  All rights reserved.               *
+*   Copyright (1984-2024) Brendan McKay.  All rights reserved.               *
 *   Subject to waivers and disclaimers in nauty.h.                           *
 *                                                                            *
 *   CHANGE HISTORY                                                           *
@@ -78,6 +78,8 @@
 *       29-Feb-16 : add subpartition()                                       *
 *        6-Apr-16 : add countcells(), make subpartition return a count       *
 *       13-Jun-23 : simplify sethash() without changing the value            *
+*        5-Apr-24 : add numloops() and numloops_sg()                         *
+*              : allow loops in readgraph(), readgraph_sg(), readgraph_swg() *
 *                                                                            *
 *****************************************************************************/
 
@@ -523,7 +525,8 @@ putset_firstbold(FILE *f, set *set1, int *curlenp, int linelength,
 
 /*****************************************************************************
 *                                                                            *
-*  readgraph(f,g,digraph,prompt,edit,linelength,m,n) reads a graph g from f. *
+*  readgraph(f,g,digraph,prompt,edit,linelength,m,n) reads                   *
+*  a graph or digraph g from f.                                              *
 *  Commands: (There is always a "current vertex" v, initially labelorg;      *
 *             n is an unsigned integer.)                                     *
 *  n  : add edge (v,n)                                                       *
@@ -534,7 +537,6 @@ putset_firstbold(FILE *f, set *set1, int *curlenp, int linelength,
 *  .  : exit                                                                 *
 *  !  : skip rest of input line                                              *
 *                                                                            *
-* If digraph==FALSE, loops are illegal and (x,y) => (y,x)                    *
 * If edit==FALSE, the graph is initialized to empty.                         *
 * If prompt==TRUE, prompts are written to PROMPTFILE.                        *
 * linelength is a limit on the number of characters per line caused by '?'   *
@@ -572,7 +574,7 @@ readgraph(FILE *f, graph *g, boolean digraph, boolean prompt,
             if (neg)
             {
                 neg = FALSE;
-                if (w < 0 || w >= n || (!digraph && w == v))
+                if (w < 0 || w >= n)
                     fprintf(ERRFILE,"illegal edge (%d,%d) ignored\n\n",
                             v+labelorg,w+labelorg);
                 else
@@ -597,7 +599,7 @@ readgraph(FILE *f, graph *g, boolean digraph, boolean prompt,
                 else
                 {
                     ungetc(c,f);
-                    if (w < 0 || w >= n || (!digraph && w == v))
+                    if (w < 0 || w >= n)
                         fprintf(ERRFILE,"illegal edge (%d,%d) ignored\n\n",
                                 v+labelorg,w+labelorg);
                     else
@@ -715,7 +717,8 @@ ranreg_sg(sparsegraph *sg, int degree, int n)
 
 /*****************************************************************************
 *                                                                            *
-*  readgraph_sg(f,sg,digraph,prompt,linelength,n) reads a graph g from f.    *
+*  readgraph_sg(f,sg,digraph,prompt,linelength,n) reads a graph              *
+*  or digraph g from f.                                                      *
 *  Commands: (There is always a "current vertex" v, initially labelorg;      *
 *             n is an unsigned integer.)                                     *
 *  n  : add edge (v,n)                                                       *
@@ -727,7 +730,6 @@ ranreg_sg(sparsegraph *sg, int degree, int n)
 *  !  : skip rest of input line                                              *
 *  sg must be initialised                                                    *
 *                                                                            *
-* If digraph==FALSE, loops are illegal and (x,y) => (y,x)                    *
 * If prompt==TRUE, prompts are written to PROMPTFILE.                        *
 * linelength is a limit on the number of characters per line caused by '?'   *
 * A value of linelength <= 0 dictates no line breaks at all.                 *
@@ -770,7 +772,7 @@ readgraph_sg(FILE *f, sparsegraph *sg, boolean digraph, boolean prompt,
             if (neg)
             {
                 neg = FALSE;
-                if (ww < 0 || ww >= n || (!digraph && ww == vv))
+                if (ww < 0 || ww >= n)
                     fprintf(ERRFILE,"illegal edge (%d,%d) ignored\n\n",
                             vv+labelorg,ww+labelorg);
                 else
@@ -808,7 +810,7 @@ readgraph_sg(FILE *f, sparsegraph *sg, boolean digraph, boolean prompt,
                 else
                 {
                     ungetc(c,f);
-                    if (ww < 0 || ww >= n || (!digraph && ww == vv))
+                    if (ww < 0 || ww >= n)
                         fprintf(ERRFILE,"illegal edge (%d,%d) ignored\n\n",
                                 vv+labelorg,ww+labelorg);
                     else
@@ -937,8 +939,8 @@ readgraph_sg(FILE *f, sparsegraph *sg, boolean digraph, boolean prompt,
 
 /*****************************************************************************
 *                                                                            *
-*  readgraph_swg(f,sg,digraph,prompt,linelength,n) reads a sparse weighted   *
-*  graph g from f.                                                           *
+* readgraph_swg(f,sg,digraph,prompt,linelength,n) reads a sparse             *
+* weighted graph or digraph g from f.                                        *
 *  Commands: (There is always a "current vertex" v, initially labelorg;      *
 *             n is an unsigned integer, w is a weight.)                      *
 *  n  : add edge (v,n)                                                       *
@@ -952,7 +954,6 @@ readgraph_sg(FILE *f, sparsegraph *sg, boolean digraph, boolean prompt,
 *  W# : set the weight from now on                                           *
 *  sg must be initialised                                                    *
 *                                                                            *
-* If digraph==FALSE, loops are illegal and (x,y) => (y,x)                    *
 * For digraphs, an unspecified opposite edge has weight SG_MINWEIGHT         *
 * If edges are inserted more than once, the largest weight counts.           *
 * If prompt==TRUE, prompts are written to PROMPTFILE.                        *
@@ -999,7 +1000,7 @@ readgraph_swg(FILE *f, sparsegraph *sg, boolean digraph, boolean prompt,
             if (neg)
             {
                 neg = FALSE;
-                if (ww < 0 || ww >= n || (!digraph && ww == vv))
+                if (ww < 0 || ww >= n)
                     fprintf(ERRFILE,"illegal edge (%d,%d) ignored\n\n",
                             vv+labelorg,ww+labelorg);
                 else
@@ -1040,7 +1041,7 @@ readgraph_swg(FILE *f, sparsegraph *sg, boolean digraph, boolean prompt,
                 else
                 {
                     ungetc(c,f);
-                    if (ww < 0 || ww >= n || (!digraph && ww == vv))
+                    if (ww < 0 || ww >= n)
                         fprintf(ERRFILE,"illegal edge (%d,%d) ignored\n\n",
                                 vv+labelorg,ww+labelorg);
                     else
@@ -2736,10 +2737,9 @@ void
 mathon(graph *g1, int m1, int n1, graph *g2, int m2, int n2)
 {
     int i,j,ii,jj;
-    long li;
     set *rowptr,*gp;
 
-    for (li = (long)m2 * (long)n2; --li >= 0;) g2[li] = 0;
+    EMPTYGRAPH(g2,m2,n2);
 
     for (i = 1; i <= n1; ++i)
     {
@@ -2788,10 +2788,9 @@ void
 rangraph(graph *g, boolean digraph, int invprob, int m, int n)
 {
     int i,j;
-    long li;
     set *row,*col;
 
-    for (li = (long)m * (long)n; --li >= 0;) g[li] = 0;
+    EMPTYGRAPH(g,m,n);
 
     for (i = 0, row = g; i < n; ++i, row += m)
         if (digraph)
@@ -2822,10 +2821,9 @@ void
 rangraph2(graph *g, boolean digraph, int p1, int p2, int m, int n)
 {
     int i,j;
-    long li;
     set *row,*col;
 
-    for (li = (long)m * (long)n; --li >= 0;) g[li] = 0;
+    EMPTYGRAPH(g,m,n);
 
     for (i = 0, row = g; i < n; ++i, row += m)
         if (digraph)
@@ -3156,6 +3154,43 @@ converse(graph *g, int m, int n)
             }
 }
 
+/***************************************************************************
+*                                                                          *
+*  numloops and numloops_sg return the number of loops.                    *
+*                                                                          *
+***************************************************************************/
+
+int
+numloops(graph *g, int m, int n)
+{
+    set *gi;
+    int i,nl;
+
+    nl = 0;
+    for (i = 0, gi = g; i < n; ++i, gi += m)
+        if (ISELEMENT(gi,i)) ++nl;
+
+    return nl;
+}
+
+int
+numloops_sg(sparsegraph *sg)
+{
+    int i,nl;
+    int *d,*e,*ei,*eilim;
+    size_t *v;
+
+    SG_VDE(sg,v,d,e);
+    nl = 0;
+    for (i = 0; i < sg->nv; ++i)
+    {
+        eilim = e + (v[i] + d[i]);
+        for (ei = e+v[i]; ei < eilim; ++ei)
+            if (*ei == i) ++nl;
+    }
+    return nl;
+}
+
 /*****************************************************************************
 *                                                                            *
 *  naututil_check() checks that this file is compiled compatibly with the    *
@@ -3166,7 +3201,7 @@ converse(graph *g, int m, int n)
 void
 naututil_check(int wordsize, int m, int n, int version)
 {
-    if (wordsize != WORDSIZE)
+   if (wordsize != WORDSIZE)
     {
         fprintf(ERRFILE,"Error: WORDSIZE mismatch in naututil.c\n");
         exit(1);

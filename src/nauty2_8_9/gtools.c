@@ -1,5 +1,5 @@
 /* gtools.c : Common routines for gtools programs. */
-/* Version 4.5, Aug 2023. */
+/* Version 4.6, Apr 2024. */
 
 /* Todo: size check if MAXN>0; option to free memory */
 
@@ -60,6 +60,7 @@ extern FILE *popen(const char*,const char*);
   Version 4.4: Use fgets for gtools_getline() as it is faster except for
                  very small graphs.
   Version 4.5: Add arg_ull()
+  Version 4.6: Add readg_loops()
 */
 
 #define B(i) (1 << ((i)-1))
@@ -952,6 +953,7 @@ readgg(FILE *f, graph *g, int reqm, int *pm, int *pn, boolean *digraph)
    *pm = the actual value of m 
    *pn = the value of n 
    *digraph = whether the input is a digraph
+ * Put the code type into readg_code
 */
 {
     char *s,*p;
@@ -1039,6 +1041,43 @@ readg(FILE *f, graph *g, int reqm, int *pm, int *pn)
 
 /***********************************************************************/
 
+graph*                 /* read graph into nauty format */
+readg_loops(FILE *f, graph *g, int reqm, int *pm, int *pn,
+                int *loops, boolean *digraph) 
+/* graph6, digraph6 and sparse6 formats are supported 
+
+   f = an open file 
+   g = place to put the answer (NULL for dynamic allocation) 
+   reqm = the requested value of m (0 => compute from n) 
+   *pm := the actual value of m 
+   *pn := the value of n 
+   *digraph := whether the input is a digraph
+   *loops := the number of loops
+   * Put the code type into readg_code
+*/
+{
+    graph *gg,*gi;
+    int i,m,n;
+
+    gg = readgg(f,g,reqm,&m,&n,digraph);
+
+    if (!gg) return NULL;
+
+    *loops = 0;
+    if (readg_code != GRAPH6)
+    {
+        for (i = 0, gi = gg; i < n; ++i, gi += m)
+            if (ISELEMENT(gi,i)) ++*loops;
+    }
+
+    *pn = n;
+    *pm = m;
+
+    return gg;
+}
+
+/***********************************************************************/
+
 int
 checkgline(char *s)
 /* Check if s[0..] appears to be a graph input line.  A complete check
@@ -1105,6 +1144,7 @@ readgg_inc(FILE *f, graph *g, int reqm, int *pm, int *pn,
    *digraph = whether the input is a digraph
    If prevg!=NULL, it is a prior graph for use in case the next
    input is a sparse6 increment.
+ * Put the code type into readg_code
 */
 {
     char *s,*p;
@@ -1205,7 +1245,7 @@ readg_inc(FILE *f, graph *g, int reqm, int *pm, int *pn,
 
     if (!gg) return NULL;
     if (digraph)
-        gt_abort(">E readg_inc() doesn't all digraphs; use readgg_inc()\n");
+        gt_abort(">E readg_inc() doesn't allow digraphs; use readgg_inc()\n");
     return gg;
 }
 
@@ -1496,6 +1536,7 @@ read_sgg_loops(FILE *f, sparsegraph *sg, int *nloops, boolean *digraph)
  *      - must be initialised if not NULL 
  * nloops := number of loops (each loop in a sparse6 string
  *        gives one loop in the sparse representation)
+ * Put the code type into readg_code
  */
 {
     char *s,*p;
@@ -1559,7 +1600,7 @@ read_sg_loops(FILE *f, sparsegraph *sg, int *nloops)
  *      - must be initialised if not NULL 
  * nloops := number of loops (each loop in a sparse6 string
  *        gives one loop in the sparse representation)
- * digraph = whether input line was a digraph
+ *  Returns NULL if no graph to read.
  */
 {
     sparsegraph *sgg;
@@ -1580,6 +1621,7 @@ read_sg(FILE *f, sparsegraph *sg)
  *  *f = an open file
  *  *sg = place to put the answer (NULL for dynamic allocation) 
  *      - must be initialised if not NULL 
+ *  Returns NULL if no graph to read.
  */
 {
     int loops;
