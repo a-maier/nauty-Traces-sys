@@ -16,7 +16,6 @@ cc = { version = "1.0", optional = true }
 
 [dependencies]
 libc = { version = "0.2", optional = true }
-num-integer = "0.1"
 
 [features]
 default = ["bundled", "tls"]

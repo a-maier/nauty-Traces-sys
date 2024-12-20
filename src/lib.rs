@@ -5,7 +5,6 @@ mod bindings;
 
 use ::std::os::raw::c_int;
 pub use bindings::*;
-use num_integer::Integer;
 use std::ptr::addr_of_mut;
 
 // bindgen doesn't get the types right for the following constants
@@ -35,8 +34,7 @@ pub const bit: [set; set::BITS as usize] = {
 };
 
 pub fn SETWORDSNEEDED(n: usize) -> usize {
-    // TODO: use standard library function as soon as it's available
-    Integer::div_ceil(&n, &(WORDSIZE as usize))
+    n.div_ceil(WORDSIZE as _)
 }
 
 impl std::default::Default for optionblk {
