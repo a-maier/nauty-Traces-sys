@@ -5,7 +5,6 @@ mod bindings;
 
 use ::std::os::raw::c_int;
 pub use bindings::*;
-use std::ptr::addr_of_mut;
 
 // bindgen doesn't get the types right for the following constants
 pub const FALSE: boolean = bindings::FALSE as boolean;
@@ -59,7 +58,7 @@ impl std::default::Default for optionblk {
             mininvarlevel: 0,
             maxinvarlevel: 1,
             invararg: 0,
-            dispatch: addr_of_mut!(dispatch_graph),
+            dispatch: &raw mut dispatch_graph,
             schreier: FALSE,
             extra_options: std::ptr::null_mut(),
         }
@@ -80,7 +79,7 @@ impl optionblk {
     /// Default options for undirected sparse graphs, equivalent to nauty's DEFAULTOPTIONS_SPARSEGRAPH.
     pub fn default_sparse() -> Self {
         optionblk {
-            dispatch: addr_of_mut!(dispatch_sparse),
+            dispatch: &raw mut dispatch_sparse,
             ..Self::default()
         }
     }
@@ -89,7 +88,7 @@ impl optionblk {
     pub fn default_sparse_digraph() -> Self {
         optionblk {
             invarproc: Some(adjacencies_sg),
-            dispatch: addr_of_mut!(dispatch_sparse),
+            dispatch: &raw mut dispatch_sparse,
             ..Self::default_digraph()
         }
     }
