@@ -158,5 +158,20 @@ faster but less portable.
 - `native`: Allow processor instructions that are specific to the
   current hardware. Implies `lzc` and `popcnt`.
 
+## Custom settings
+
+The default settings for `WORDSIZE` and `MAXN` can be changed by
+setting the environment variables `NAUTY_TRACES_WORDSIZE` and
+`NAUTY_TRACES_MAXN` for the compilation, e.g.
+
+```bash
+NAUTY_TRACES_MAXN=32 cargo build
+```
+
+See the [nauty and Traces User's
+Guide](https://pallini.di.uniroma1.it/Guide.html) for
+details. *Setting `WORDSIZE` to 128 currently leads to undefined
+behaviour due to a [limitation in Rust's Foreign Function
+Interface](https://github.com/rust-lang/rust/issues/54341)*.
 
 License: Apache-2.0
