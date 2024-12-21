@@ -184,6 +184,16 @@ fn get_nauty_defines() -> HashMap<&'static str, Option<&'static str>> {
         Err(e) => panic!("Failed to fetch value of environment variable {WORDSIZE_ENV_NAME}: {e}")
     }
 
+    const MAXN_ENV_NAME: &str = "NAUTY_TRACES_MAXN";
+    const MAXN_VAR_NAME: &str = "MAXN";
+    match env::var(MAXN_ENV_NAME) {
+        Ok(size) => {
+            defines.insert(MAXN_VAR_NAME, Some(&*size.leak()));
+        }
+        Err(env::VarError::NotPresent) => { }
+        Err(e) => panic!("Failed to fetch value of environment variable {MAXN_ENV_NAME}: {e}")
+    }
+
     #[cfg(feature = "tls")]
     defines.insert("USE_TLS", None);
 
