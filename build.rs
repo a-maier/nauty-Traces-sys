@@ -163,14 +163,25 @@ fn compile_nauty<K: AsRef<str>, V: AsRef<str>>(
 }
 
 fn get_nauty_defines() -> HashMap<&'static str, Option<&'static str>> {
+    use std::env;
+
     if !cfg!(feature = "bundled") {
         return HashMap::new();
     }
     let mut defines = HashMap::new();
 
-    // see section 3 in nauty manual (nauty 2.7r4)
-    if c_long::BITS > 32 {
-        defines.insert("WORDSIZE", Some("64"));
+    const WORDSIZE_ENV_NAME: &str = "NAUTY_TRACES_WORDSIZE";
+    const WORDSIZE_VAR_NAME: &str = "WORDSIZE";
+    match env::var(WORDSIZE_ENV_NAME) {
+        Ok(size) => {
+            defines.insert(WORDSIZE_VAR_NAME, Some(&*size.leak()));
+        }
+        Err(env::VarError::NotPresent) => if c_long::BITS > 32 {
+            // see section 3 in nauty manual (nauty 2.7r4)
+            // TODO: this might be unnecessary, nauty sets it internally
+            defines.insert(WORDSIZE_VAR_NAME, Some("64"));
+        }
+        Err(e) => panic!("Failed to fetch value of environment variable {WORDSIZE_ENV_NAME}: {e}")
     }
 
     #[cfg(feature = "tls")]
