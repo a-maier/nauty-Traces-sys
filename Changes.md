@@ -1,3 +1,9 @@
+# Version 0.9
+
+- Include `MAXN` in generated bindings
+- Allow custom settings for `WORDSIZE` and `MAXN`
+- The minimum supported Rust version is now 1.82
+
 # Version 0.8
 
 - Update to nauty and Traces 2\_8\_9
