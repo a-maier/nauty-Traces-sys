@@ -85,6 +85,7 @@ fn main() {
         // and this is completely off (linker error)
         // .allowlist_var("bit")
         .allowlist_var("NAUTYVERSIONID")
+        .allowlist_var("MAXN")
         .allowlist_var("WORDSIZE")
         .allowlist_var("stderr")
         .allowlist_var("stdout")
