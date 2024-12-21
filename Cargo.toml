@@ -9,6 +9,7 @@ readme = "Readme.md"
 keywords = ["graph-algorithms"]
 categories = ["external-ffi-bindings", "mathematics"]
 repository = "https://github.com/a-maier/nauty-Traces-sys"
+rust-version = "1.82"
 
 [build-dependencies]
 bindgen = "0.71"
