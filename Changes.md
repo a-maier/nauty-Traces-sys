@@ -1,3 +1,7 @@
+# Version 0.10
+
+- Update to nauty and Traces 2\_9\_0
+
 # Version 0.9
 
 - Include `MAXN` in generated bindings
