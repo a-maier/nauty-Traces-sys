@@ -12,7 +12,7 @@ repository = "https://github.com/a-maier/nauty-Traces-sys"
 rust-version = "1.82"
 
 [build-dependencies]
-bindgen = "0.71"
+bindgen = "0.72"
 cc = { version = "1.2", optional = true }
 
 [dependencies]
