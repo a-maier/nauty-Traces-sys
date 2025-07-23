@@ -11,7 +11,7 @@ Add the following lines to your Cargo.toml:
 
 ```toml
 [dependencies]
-nauty-Traces-sys = "0.9"
+nauty-Traces-sys = "0.10"
 ```
 
 By default, you need a C compiler installed on your system. See the
