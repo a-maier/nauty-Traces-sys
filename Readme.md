@@ -15,7 +15,8 @@ nauty-Traces-sys = "0.9"
 ```
 
 By default, you need a C compiler installed on your system. See the
-[Features section](#features) for alternatives.
+[Features section](#features) for alternatives. The minimum required
+Rust version is 1.82.0.
 
 # Caveats
 
