@@ -23,7 +23,7 @@ By default, you need a C compiler installed on your system. See the
   with this crate or a local installation. Both options have
   advantages and disadvantages. See the [Features section](#features)
   below. Note that the current version of this crate assumes nauty &
-  Traces version 2.8.9 and may not work with other versions.
+  Traces version 2.9.0 and may not work with other versions.
 
 * Some C macros have no direct equivalent.
 
