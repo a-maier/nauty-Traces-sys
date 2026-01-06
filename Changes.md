@@ -1,3 +1,9 @@
+# Version 0.11
+
+- Update to nauty and Traces 2\_9\_3
+- Don't derive `PartialEq` for types containing function pointers.
+  See https://doc.rust-lang.org/nightly/core/ptr/fn.fn_addr_eq.html
+
 # Version 0.10
 
 - Update to nauty and Traces 2\_9\_0
