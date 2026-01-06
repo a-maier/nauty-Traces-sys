@@ -877,3 +877,49 @@ Changes from nauty 2.7 to nauty 2.8
 * An uninitialised variable with unknown consequences was fixed in Traces.
 
 -- Now 2.9.0
+
+* uniqg was modified to give the same hash codes on little-endian and
+  big-endian computers. Thanks to Jerry James for helping with this.
+
+* Add note to uniqg: the hash codes written by uniqg -H and read by uniqg -h
+  depend on the endianness of the computer, so when you are using uniq -h to
+  read hash codes you have to do it on a computer of the same endianness as
+  was used to write them. Note that all but a handful of modern CPUs are
+  little-endian, including Intel x86-64 and Apple silicon.
+
+* A buffer overrun in dreadnaut introduced in version 2.9.0 was fixed. Thanks
+  to Jerry James for identifying it. This did not impact any programs other
+  than dreadnaut. The bug was also present in 2.9.1rc1 and 2.9.1rc2 but was
+  fixed in 2.9.1rc3.
+
+-- Now 2.9.1
+
+* The -r and -R switches in complg were badly broken for a long time. The core
+  functionality of complg was fine, however. As well as fixing this problem,
+  complg has a new switch -S that outputs only the input graphs that are
+  self-complementary.
+
+* vcolg has a new switch -F# that says to use the group that fixes the first
+  # vertices setwise and also to use only colour 0 on the first # vertices.
+
+* genrang has a new switch -G# that provides an approximation of random
+  unlabelled graphs. The greater the parameter, the better the approximation
+  and the worse the efficiency. In particular graphs whose automorphism
+  groups have order at most # come out in the correct relative proportions.
+
+* uniqg has a new switch -J that writes 32-byte hash codes as lines ending
+  with \n.  Note that it is still binary, but now it is good for sorting.
+
+* A labelling error with Traces when an initial partition is specified was
+  corrected. A minor standards violation with memcpy was also fixed.
+  Thanks to Mathieu Dutour and Julius Kunze for reporting.
+
+* A major rearrangement was made to the makefile to support more options.
+  All compiles now include CPPFLAGS, which can be defined on the ./configure
+  command. Some missing uses of LDFLAGS were added to the makefile.
+
+* cubhamg -V -c now displays all hamiltonian cycles. In addition, cubhamg has
+  a facility for user-written code to be called for each cycle. This is
+  documented in the source code cubhamg.c.
+
+-- Now 2.9.3

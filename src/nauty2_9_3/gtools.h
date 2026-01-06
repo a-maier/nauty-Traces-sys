@@ -1,5 +1,5 @@
 /*****************************************************************************
-* This is the main header file for gtools.  nauty version 2.9.0
+* This is the main header file for gtools.  nauty version 2.9.3
 * Subject to the copyright notice in nauty.h.                                *
 * gtools.h.  Generated from gtools-h.in by configure.
 *****************************************************************************/
@@ -31,6 +31,7 @@ used, it is necessary to check they are correct.
 #define HAVE_SETENV 1   /* setenv() exists */
 #define HAVE_FORK 1   /* fork() exists */
 #define HAVE_SIGNAL_H  1      /* <signal.h> exists */
+#define HAVE_ENDIAN_H  1      /* <endian.h> exists */
 #define HAVE_FSEEKO 1  /* fseeko() and ftello() exist */
 #define FSEEKO_DEC 1  /* fseeko() and ftello() declared */
 #define HAVE_SIGACTION 1  /* sigaction() exists */

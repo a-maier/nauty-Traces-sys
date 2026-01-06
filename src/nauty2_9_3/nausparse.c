@@ -1504,9 +1504,7 @@ nauty_to_sg(graph *g, sparsegraph *sg, int m, int n)
         SG_INIT(*sg);
     }
 
-    nde = 0;
-    for (gi = g + (size_t)m*(size_t)n; --gi >= g; )
-        if (*gi != 0) nde += POPCOUNT(*gi);
+    SETSIZE(nde,g,(size_t)m*(size_t)n);
 
     sg->nv = n;
     sg->nde = nde;

@@ -102,7 +102,7 @@ fn main() {
 fn compile_nauty<K: AsRef<str>, V: AsRef<str>>(
     defines: &HashMap<K, Option<V>>,
 ) {
-    const NAUTY_DIR: &str = "nauty2_9_0";
+    const NAUTY_DIR: &str = "nauty2_9_3";
     const NAUTY_HEADERS: [&str; 16] = [
         "gtools.h",
         "gutils.h",

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* This is the header file for version 2.9.0 of naututil.c.       *
+* This is the header file for version 2.9.3 of naututil.c.       *
 * naututil.h.  Generated from naututil-h.in by configure.
 *****************************************************************************/
 

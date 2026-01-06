@@ -1,5 +1,5 @@
 /**************************************************************************
-*    This is the header file for Version 2.9.0 of nauty().
+*    This is the header file for Version 2.9.3 of nauty().
 *    nauty.h.  Generated from nauty-h.in by configure.
 **************************************************************************/
 
@@ -603,17 +603,17 @@ typedef unsigned long long nauty_counter;
 #define COUNTER_FMT_RAW "llu"
 #define PRINT_COUNTER(f,x) fprintf(f,COUNTER_FMT,x)
 
-#define NAUTYVERSIONID (29000+HAVE_TLS)  /* 10000*version + HAVE_TLS */
+#define NAUTYVERSIONID (29300+HAVE_TLS)  /* 10000*version + HAVE_TLS */
 #define NAUTYREQUIRED NAUTYVERSIONID  /* Minimum compatible version */
 
 #if WORDSIZE==16
-#define NAUTYVERSION "2.9.0 (16 bits)"
+#define NAUTYVERSION "2.9.3 (16 bits)"
 #elif WORDSIZE==32
-#define NAUTYVERSION "2.9.0 (32 bits)"
+#define NAUTYVERSION "2.9.3 (32 bits)"
 #elif WORDSIZE==64
-#define NAUTYVERSION "2.9.0 (64 bits)"
+#define NAUTYVERSION "2.9.3 (64 bits)"
 #elif WORDSIZE==128
-#define NAUTYVERSION "2.9.0 (128 bits)"
+#define NAUTYVERSION "2.9.3 (128 bits)"
 #endif
 
 #ifndef  MAXN  /* maximum allowed n value; use 0 for dynamic sizing. */
@@ -682,7 +682,7 @@ typedef unsigned long long nauty_counter;
 #define ISELEMENT0(setadd,pos) (((setadd)[SETWD(pos)] & BITT[SETBT(pos)]) != 0)
 #define EMPTYSET0(setadd,m) \
     {setword *es_; \
-    for (es_ = (setword*)(setadd)+(m); --es_ >= (setword*)(setadd);) *es_=0;}
+    for (es_ = (setword*)(setadd)+(m); es_ > (setword*)(setadd);) *--es_=0;}
 #define GRAPHROW0(g,v,m) ((set*)(g) + (m)*(size_t)(v))
 #define ADDONEARC0(g,v,w,m) ADDELEMENT0(GRAPHROW0(g,v,m),w)
 #define ADDONEEDGE0(g,v,w,m) { ADDONEARC0(g,v,w,m); ADDONEARC0(g,w,v,m); }
@@ -703,7 +703,7 @@ typedef unsigned long long nauty_counter;
 #define DELONEEDGE DELONEEDGE1
 #define EMPTYGRAPH EMPTYGRAPH1
 #define FILLSET(setadd,m,n) { *(setword*)(setadd) = ALLMASK(n); }
-#define SETSIZE(sz,setadd,m) { (sz) = POPCOUNT(*setadd); }
+#define SETSIZE(sz,setadd,m) { setword s__=*(setadd); (sz) = POPCOUNT(s__); }
 #else
 #define ADDELEMENT ADDELEMENT0
 #define DELELEMENT DELELEMENT0
@@ -720,9 +720,9 @@ typedef unsigned long long nauty_counter;
  for (i_ = 0; i_ < t_; ++i_) (setadd)[i_]=ALLBITS; \
  if ((t_=(n)-t_*WORDSIZE)>0) (setadd)[i_++]=ALLMASK(t_); \
  for (;i_ < m; ++i_) (setadd)[i_] = 0; }
-#define SETSIZE(sz,setadd,m) { set *s_; size_t sz_; sz_ = 0; \
- for (s_ = (set*)(setadd)+(m); --s_ >= (set*)(setadd); ) \
-    sz_ += POPCOUNT(*s_); (sz) = sz_; }
+#define SETSIZE(sz,setadd,m) { set s__,*s_; size_t sz_=0; \
+ for (s_ = (set*)(setadd)+(m); s_ > (set*)(setadd); ) \
+ { s__=*--s_; sz_ += POPCOUNT(s__); } (sz) = sz_; }
 #endif
 
 

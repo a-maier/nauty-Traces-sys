@@ -1129,7 +1129,9 @@ Traces(sparsegraph *g_arg, int *lab, int *ptn,
                         break;
                     case 1:
                         if (!TempOrbits) {
-                            memcpy(WorkArray1, tv->currorbit, n*sizeof(int));
+                            if (WorkArray1 != tv->currorbit) {
+                                memcpy(WorkArray1, tv->currorbit, n*sizeof(int));
+                            }
                             TempOrbits = WorkArray1;
                         }
                         memset(TempOrbSize, 0, n*sizeof(int));
@@ -8502,11 +8504,11 @@ void grouporderplus(sparsegraph *sg_orig, Candidate *Cand, Partition *Part, perm
                     k = i+Part->cls[i];
                     for (j=i; j<k; j++) {
                         Place(Cand->lab[j], Cand, Part);
-                        if ((TheGraph[Cand->lab[j]].d >= 0) && (TheGraph[Cand->lab[j]].d < sg_orig->d[Cand->lab[j]])) {
+//                        if ((TheGraph[Cand->lab[j]].d >= 0) && (TheGraph[Cand->lab[j]].d < sg_orig->d[Cand->lab[j]])) {
                             MakeCanTree(Cand->lab[j], sg_orig, n, Cand, Part, tv);
                             if (do_ngh) {
                                 MakeCanTree(TheGraph[Cand->lab[j]].e[0], sg_orig, n, Cand, Part, tv);
-                            }
+//                            }
                         }
                     }
                 }

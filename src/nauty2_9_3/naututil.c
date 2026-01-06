@@ -2147,10 +2147,9 @@ hash(set *setarray, long length, int key)
     set *sptr;
 
     code = length;
-    sptr = setarray + length;
 
-    while (--sptr >= setarray)
-        code = (code<<key) ^ ((code>>(32-key)) + *sptr);
+    for (sptr = setarray+length; sptr > setarray; )
+        code = (code<<key) ^ ((code>>(32-key)) + *--sptr);
 
     return code;
 }
